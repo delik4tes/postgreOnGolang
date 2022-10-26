@@ -1,0 +1,60 @@
+.flags{
+    width: 200px;
+    height: 140px;
+    border-radius: 15px;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.caption{
+    font-size: 18px;
+    font-weight: bold;
+    color:white;
+}
+.main_caption{
+    font-size: 30px;
+    font-weight: bolder;
+    color: black;
+    margin-top: 20px;
+    text-align: center;
+}
+.form{
+    height: 250px;
+    background-color: #88A7C8 ;
+    border-radius: 10px;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+.lang{
+    grid-template-columns: 300px 300px 300px;
+    display: grid;
+    text-align: center;
+    column-gap: 10px;
+    row-gap: 15px;
+    justify-content: center;
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+.button_contract{
+    width: 450px;
+    height: 150px;
+    background: #14385E;
+    border-radius: 10px;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    display: block;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
+}
+
+.button_contract:hover{
+    cursor: pointer;
+    background-color: #88A7C8;
+}

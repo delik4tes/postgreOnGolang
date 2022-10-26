@@ -1,0 +1,31 @@
+{{ define "contract" }}
+
+{{ template "header" }}
+    <main>
+        <form action="" method="post" class="form">
+<!--            <img src="/static/materials/icon.png" id="logo" alt="logo">-->
+
+            <label for="lang">Выберите язык</label><select id="lang" name="language" class="select" onchange="getprice()">
+                <option value="Английский язык">Английский язык</option>
+                <option value="Немецкий язык">Немецкий язык</option>
+                <option value="Французский язык">Французский язык</option>
+                <option value="Испанский язык">Испанский язык</option>
+                <option value="Китайский язык">Китайский язык</option>
+                <option value="Японский язык">Японский язык</option>
+                <option value="Хинди">Хинди</option>
+                <option value="Иврит">Иврит</option>
+                <option value="Казахский язык">Казахский язык</option>
+                <option value="Чувашский язык">Чувашский язык</option>
+                <option value="Турецкий язык">Турецкий язык</option>
+                <option value="Арабский язык">Арабский язык</option>
+            </select>
+
+            <label for="month">Количество месяцев</label><input id="month" value="1" min="1" type="number" name="month" onchange="getprice()">
+            <label for="price">Итоговая цена</label><input id="price" value="1700₽" type="text" name="price" readonly>
+            <button class="form-btn">Оформить</button>
+            © 2022
+        </form>
+    </main>
+{{ template "footer" }}
+
+{{ end }}

@@ -1,0 +1,179 @@
+.flags{
+    width: 200px;
+    height: 140px;
+    border-radius: 15px;
+    margin-top: 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.caption{
+    font-size: 18px;
+    font-weight: bold;
+    color:white;
+}
+.main_caption{
+    font-size: 30px;
+    font-weight: bolder;
+    color: black;
+    margin-top: 20px;
+    text-align: center;
+}
+.form{
+    height: 250px;
+    background-color: #88A7C8 ;
+    border-radius: 10px;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+.lang{
+    grid-template-columns: 300px 300px 300px;
+    display: grid;
+    text-align: center;
+    column-gap: 10px;
+    row-gap: 15px;
+    justify-content: center;
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+.button_contract{
+    width: 450px;
+    height: 150px;
+    background: #14385E;
+    border-radius: 10px;
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    display: block;
+    margin-top: 10%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
+}
+
+.button_contract:hover{
+    cursor: pointer;
+    background-color: #88A7C8;
+}
+
+body{
+    margin: 0;
+    font-family: "Lucida Grande", sans-serif;
+    background: white;
+}
+
+a{
+    text-decoration: none;
+}
+
+.wrapper{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column ;
+}
+
+.header{
+    width:100%;
+    margin: 0;
+    height: 70px;
+    background:#14385E;
+    display: flex;
+    flex-direction: row;
+}
+
+.side {
+    margin-top: 10px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.btn{
+    margin: 0;
+    padding: 15px;
+    font-size: 15px;
+    border: none;
+    border-radius: 10px;
+}
+
+.right_btn{
+    display: flex;
+}
+
+#icon{
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+#main{
+    margin-left: 20px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
+}
+
+#main:hover{
+    background-color: #3d6690;
+    color:white;
+}
+
+#reg{
+    margin-right: 30px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
+}
+
+#reg:hover{
+    background-color: #3d6690;
+    color: white;
+}
+
+#login{
+    margin-right: 20px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
+}
+
+#login:hover{
+    background-color: #3d6690;
+    color: white;
+}
+
+body{
+    margin: 0;
+    font-family: "Lucida Grande", sans-serif;
+    background: white;
+}
+
+a{
+    text-decoration: none;
+}
+
+.wrapper{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column ;
+}
+
+.footer{
+    padding-top: 10px;
+    padding-bottom: 0;
+    background:#14385E;
+    color: white;
+    text-align: center;
+}
+#git{
+    width: 80px;
+    height: 35px;
+    cursor: pointer;
+    margin-bottom: 0;
+}

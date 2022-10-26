@@ -1,0 +1,36 @@
+{{ define "header" }}
+<!DOCTYPE html>
+<html lang = "ru">
+<head>
+    <meta charset="UTF-8">
+    <title>PostgresLanguage</title>
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
+    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/header_new.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="header">
+            <a href = "/"><img id="icon" alt="icon" src="../static/materials/icon.png"></a>
+            <div class="side">
+                <a href="/">
+                    <div class="btn" id = "main">
+                        Главная
+                    </div>
+                </a>
+                <div class="right_btn">
+                    <a href="login.html">
+                        <div class="btn" id="login">
+                            Войти
+                        </div>
+                    </a>
+                    <a href="registration.html">
+                        <div class="btn" id ="reg">
+                            Регистрация
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </header>
+        {{ end }}
