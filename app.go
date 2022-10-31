@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-const password = " password=BenQuB43"
+const password = " password=postgres"
 const user = "user=postgres"
 const dbname = " dbname=tr_zhelagin_12"
 const sslmode = " sslmode=disable"
