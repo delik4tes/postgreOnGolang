@@ -1,3 +1,5 @@
+{{ define "registration" }}
+
 <!DOCTYPE html>
 <html lang="ru">
 
@@ -7,27 +9,30 @@
     <link href="/static/css/header_new.css" rel="stylesheet" type="text/css">
     <link href="/static/materials/icon.png" rel="icon" type="image/x-icon">
     <link href="/static/css/registration.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/footer.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 <div class="wrapper">
     <header class="header">
-        <a href="main.html"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
+        <a href = "/"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
         <div class="side">
-            <a href="main.html">
-                <div class="btn" id="main">
-                    Главная
-                </div>
-            </a>
             <div class="right_btn">
-                <a href="login.html">
-                    <div class="btn" id="login">
-                        Войти
+                <a href="/">
+                    <div class="btn" id="main">
+                        Главная
                     </div>
                 </a>
-                <a href="registration.html">
-                    <div class="btn" id="reg">
-                        Регистрация
+                <a href="/about/">
+                    <div class="btn" id="about">
+                        О проекте
+                    </div>
+                </a>
+            </div>
+            <div class="right_btn">
+                <a href="/login/">
+                    <div class="btn" id="login">
+                        Войти
                     </div>
                 </a>
             </div>
@@ -89,8 +94,6 @@
             © 2022
         </form>
     </main>
-    <footer></footer>
-</div>
-<script src="/static/scripts/dynamic_registration.js"></script>
-</body>
-</html>>
+    {{ template "footer" }}
+
+    {{ end }}

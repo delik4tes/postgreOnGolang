@@ -1,3 +1,5 @@
+{{ define "login" }}
+
 <!DOCTYPE html>
 <html lang = "ru">
 
@@ -7,27 +9,23 @@
     <link href="/static/css/header_new.css" rel="stylesheet" type="text/css">
     <link href="/static/materials/icon.png" rel="icon" type="image/x-icon">
     <link href="/static/css/login.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/footer.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 <div class="wrapper">
     <header class="header">
-        <a href = "../main.html"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
+        <a href = "/"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
         <div class="side">
-            <a href="../main.html">
-                <div class="btn" id = "main">
-                    Главная
-                </div>
-            </a>
             <div class="right_btn">
-                <a href="../login.html">
-                    <div class="btn" id="login">
-                        Войти
+                <a href="/">
+                    <div class="btn" id="main">
+                        Главная
                     </div>
                 </a>
-                <a href="../registration.html">
-                    <div class="btn" id ="reg">
-                        Регистрация
+                <a href="/about/">
+                    <div class="btn" id="about">
+                        О проекте
                     </div>
                 </a>
             </div>
@@ -36,12 +34,13 @@
     <main>
         <form action="" cmethod="post" class="form">
             <img src="/static/materials/icon.png" id="logo" alt="logo">
-            <input type="text" name="login" placeholder="Email adress" value="">
-            <input type="password" name="password" placeholder="Your password" value="">
+            <input type="text" name="login" placeholder="Email address">
+            <input type="password" name="password" placeholder="Your password" value="12345">
             <button class="form-btn">Войти</button>
             © 2022
         </form>
     </main>
-</div>
-</body>
-</html>>
+
+    {{ template "footer" }}
+
+    {{ end }}

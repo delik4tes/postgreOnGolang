@@ -58,6 +58,18 @@ a{
     cursor: pointer;
 }
 
+#about{
+    margin-left: 20px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
+}
+
+#about:hover{
+    background-color: #3d6690;
+    color:white;
+}
+
 #main:hover{
     background-color: #3d6690;
     color:white;
