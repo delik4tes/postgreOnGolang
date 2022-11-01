@@ -1,32 +1,42 @@
+{{ define "header" }}
+
 <!DOCTYPE html>
 <html lang = "ru">
 
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="/css/header.css" rel="stylesheet" type="text/css">
-    <link href="/materials/icon.png" rel="icon" type="image/x-icon">
+    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
+    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/about.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/success.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
     <div class="wrapper">
         <header class="header">
-            <a href = "main.html"><img id="icon" alt="icon" src="/materials/icon.png"></a>
+            <a href = "/"><img id="icon" alt="icon" src="../static/materials/icon.png"></a>
             <div class="side">
-                <a href="main.html">
+                <a href="/">
                     <div class="btn" id = "main">
                         Главная
                     </div>
                 </a>
                 <div class="right_btn">
-                    <a href="cabinet.html">
-                        <div class="btn" id ="cab">
+                    <a href="/cabinet/">
+                        <div class="btn" id="cab">
                             Личный кабинет
                         </div>
                     </a>
+                    <form action="/">
+                        <button class="btn" id="out" name="out" value="true">
+                            Выйти
+                        </button>
+                    </form>
                 </div>
             </div>
         </header>
-    </div>
-</body>
-</html>
+  {{ end }}

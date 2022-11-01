@@ -2,7 +2,7 @@
 
 {{ template "header" }}
     <main>
-        <form action="" method="post" class="form">
+        <form action="" method="post" class="form_choice">
 <!--            <img src="/static/materials/icon.png" id="logo" alt="logo">-->
 
             <label for="lang">Выберите язык</label><select id="lang" name="language" class="select" onchange="getprice()">
@@ -22,7 +22,7 @@
 
             <label for="month">Количество месяцев</label><input id="month" value="1" min="1" type="number" name="month" onchange="getprice()">
             <label for="price">Итоговая цена</label><input id="price" value="1700₽" type="text" name="price" readonly>
-            <button class="form-btn">Оформить</button>
+            <button class="form_choice-btn">Оформить</button>
             © 2022
         </form>
     </main>

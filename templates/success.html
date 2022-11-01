@@ -1,0 +1,23 @@
+{{ define "success" }}
+
+{{ template "header" }}
+
+<main>
+    <div class="alert">
+        {{ if .Alrt }}
+        {{ .Reg_alert }}
+        {{ else }}
+        {{ .Log_alert }}
+        {{ end }}
+    </div>
+    <a href="/">
+        <div class="button">
+            Вернуться обратно
+        </div>
+    </a>
+</main>
+
+
+{{ template "footer" }}
+
+{{ end }}

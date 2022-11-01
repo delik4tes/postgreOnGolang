@@ -74,3 +74,15 @@ a{
     background-color: #3d6690;
     color: white;
 }
+
+#out{
+    margin-right: 30px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
+}
+
+#out:hover{
+    background-color: #3d6690;
+    color: white;
+}
