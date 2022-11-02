@@ -79,6 +79,7 @@
                 </select>
                 <label for="experience"></label><input id="experience" class="field" type="number" name="experience" placeholder="Опыт работы" min="0" value="">
                 <label for="address"></label>
+                <label for="insert-address"></label><input id="insert-address" class="field" type="text" name="insert-address" placeholder="Адрес филиала">
                 <select id="address" class="registration-select field displayBlock" name="address">
                     {{ range $element := . }}
                     <option value={{ $element }}>{{ $element }}</option>

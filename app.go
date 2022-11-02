@@ -23,6 +23,7 @@ import (
 //  -3.Ставить статус договора
 // Владелец:
 //  -1.Полный доступ (объединить все предыдущие возможности + добавить недостающие)
+//  -2.Установка зарплаты для администратора
 
 //TODO: Добавить функцию в PostgreSQL сколько всего учиться учеников в каждом филиале
 
@@ -162,7 +163,8 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 	result := request.URL.Query()
 
 	if result["position"][0] == "student" {
-		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)", result["mail"][0], result["password"][0], "S")
+		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
+			result["mail"][0], result["password"][0], "S")
 		if err != nil {
 			panic(err)
 		}
@@ -178,12 +180,50 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+		_, err = db.Exec("INSERT INTO clients (name,surname,patronymic,branch,phone, login) VALUES ($1,$2,$3,$4,$5,$6)",
+			result["name"][0], result["surname"][0], result["patronymic"][0], idBranch, result["phone"][0], studentLogin)
+		if err != nil {
+			panic(err)
+		}
 
-		_, err = db.Exec("INSERT INTO clients (name,surname,patronymic,branch,phone, login) VALUES ($1,$2,$3,$4,$5,$6)", result["name"][0], result["surname"][0], result["patronymic"][0], idBranch, result["phone"][0], studentLogin)
 	} else if result["position"][0] == "teacher" {
-		_, err = db.Exec("INSERT INTO ")
+		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
+			result["mail"][0], result["password"][0], "T")
+		if err != nil {
+			panic(err)
+		}
+		id := db.QueryRow("SELECT id FROM branch WHERE address = $1", result["address"][0])
+		var idBranch string
+		err = id.Scan(&idBranch)
+		mail := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
+		var teacherLogin string
+		err = mail.Scan(&teacherLogin)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = db.Exec("INSERT INTO teachers (name,surname,patronymic,language,experience,login,branch) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
+			result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"], teacherLogin, idBranch)
+		if err != nil {
+			panic(err)
+		}
+
 	} else if result["position"][0] == "admin" {
-		_, err = db.Exec("INSERT INTO ")
+		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
+			result["mail"][0], result["password"][0], "A")
+		if err != nil {
+			panic(err)
+		}
+
+		mail := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
+		var adminLogin string
+		err = mail.Scan(&adminLogin)
+
+		_, err = db.Exec("INSERT INTO branch (name,surname,patronymic,address,login) VALUES ($1,$2,$3,$4,$5)",
+			result["name"][0], result["surname"][0], result["patronymic"][0], result["insert-address"][0], adminLogin)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	http.Redirect(writer, request, "/success/", http.StatusSeeOther)
