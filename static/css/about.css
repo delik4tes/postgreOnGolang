@@ -1,4 +1,4 @@
-.note{
+.back-note{
     display: flex;
     flex-direction: column;
     width: min-content;
@@ -14,7 +14,7 @@
     padding: 20px;
 }
 
-.caption{
+.about-caption{
     background-color: #14385E;
     border-radius: 15px;
     padding: 20px;
@@ -22,7 +22,7 @@
     color:white;
 }
 
-.picture{
+.about-picture{
     border-radius: 15px;
     margin-bottom: 10px;
     align-items: center;

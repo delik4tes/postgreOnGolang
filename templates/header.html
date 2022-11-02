@@ -6,33 +6,42 @@
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
-    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
-    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
     <link href="../static/css/about.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
     <link href="../static/css/success.css" rel="stylesheet" type="text/css">
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
 
 <body>
     <div class="wrapper">
         <header class="header">
-            <a href = "/"><img id="icon" alt="icon" src="../static/materials/icon.png"></a>
+            <a href = "/"><img id="icon-login" alt="icon" src="../static/materials/icon.png"></a>
             <div class="side">
-                <a href="/">
-                    <div class="btn" id = "main">
-                        Главная
-                    </div>
-                </a>
-                <div class="right_btn">
+                <div class="right-btn">
+                    <a href="/">
+                        <div class="side-button" id="main">
+                            Главная
+                        </div>
+                    </a>
+                    <a href="/about/">
+                        <div class="side-button" id="about">
+                            О проекте
+                        </div>
+                    </a>
+                </div>
+                <div class="right-btn">
                     <a href="/cabinet/">
-                        <div class="btn" id="cab">
+                        <div class="side-button" id="cabinet">
                             Личный кабинет
                         </div>
                     </a>
-                    <form action="/">
-                        <button class="btn" id="out" name="out" value="true">
+                    <form action="/success/">
+                        <button class="side-button" id="out" name="out" value="true">
                             Выйти
                         </button>
                     </form>

@@ -1,4 +1,4 @@
-.flags{
+.flag{
     width: 200px;
     height: 140px;
     border-radius: 15px;
@@ -7,12 +7,12 @@
     margin-right: auto;
 }
 
-.caption{
+.flag-caption{
     font-size: 18px;
     font-weight: bold;
     color:white;
 }
-.main_caption{
+.main-caption{
     font-size: 30px;
     font-weight: bolder;
     color: black;
@@ -39,7 +39,7 @@
     margin-bottom: 10%;
 }
 
-.button_contract{
+.button-contract{
     width: 450px;
     height: 150px;
     background: #14385E;
@@ -54,7 +54,7 @@
     padding-top: 20px;
 }
 
-.button_contract:hover{
+.button-contract:hover{
     cursor: pointer;
     background-color: #88A7C8;
 }
@@ -92,7 +92,7 @@ a{
     width: 100%;
 }
 
-.btn{
+.side-button{
     margin: 0;
     padding: 15px;
     font-size: 15px;
@@ -100,11 +100,11 @@ a{
     border-radius: 10px;
 }
 
-.right_btn{
+.right-btn{
     display: flex;
 }
 
-#icon{
+#icon-login{
     margin-top: 10px;
     margin-left: 10px;
     width: 50px;

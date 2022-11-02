@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"html/template"
@@ -45,9 +46,15 @@ type Parameter struct {
 	Authorization bool
 }
 
+type Test struct {
+	Massive [3]string
+}
+
 var reg bool = false
 
 var parametrs Parameter = Parameter{"Вы успешно зарегистрировались", "Вы успешно вошли", false, false}
+
+var test Test = Test{[3]string{"One", "Two", "Three"}}
 
 func mainPage(w http.ResponseWriter, r *http.Request) {
 
@@ -91,7 +98,7 @@ func loginPage(w http.ResponseWriter, r *http.Request) {
 
 func registrationPage(w http.ResponseWriter, r *http.Request) {
 	registration, err := template.ParseFiles("templates/registration.html", "templates/footer.html")
-	err = registration.ExecuteTemplate(w, "registration", nil)
+	err = registration.ExecuteTemplate(w, "registration", test)
 
 	reg, parametrs.Alrt = true, true
 
@@ -113,6 +120,8 @@ func successPage(w http.ResponseWriter, r *http.Request) {
 
 	success, err := template.ParseFiles("templates/success.html", "templates/footer.html", "templates/header.html")
 	err = success.ExecuteTemplate(w, "success", parametrs)
+
+	fmt.Println(r.URL.Query())
 
 	if err != nil {
 		panic(err)

@@ -1,17 +1,17 @@
-main{
+.login-main{
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
 }
 
-#logo{
+#login-logo{
     height: 150px;
     width: 150px;
     padding-bottom: 15px;
 }
 
-.form{
+.login-form{
     width: 370px;
     height: 370px;
     display: flex;
@@ -23,7 +23,7 @@ main{
     color: white;
 }
 
-.form input{
+.login-form input{
     font-size: 20px;
     padding: 5px;
     border-radius: 10px;
@@ -31,13 +31,12 @@ main{
     outline: none;
 }
 
-.form input:focus-visible{
+.login-form input:focus-visible{
     padding: 10px;
 }
 
-.form-btn {
-    font-size: 25px;
-    text-transform: uppercase;
+.login-complete {
+    font-size: 30px;
     font-weight: bold;
     margin-top: 30px;
     margin-bottom: 15px;
@@ -49,7 +48,7 @@ main{
     border-radius: 15px;
 }
 
-.form-btn:hover{
+.login-complete:hover {
     background-color: #3d6690;
     color: white;
     cursor: pointer;

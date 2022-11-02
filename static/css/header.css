@@ -31,19 +31,28 @@ a{
     width: 100%;
 }
 
-.btn{
-    margin: 0;
+.side-button {
+    margin-left: 10px;
+    margin-right: 5px;
     padding: 15px;
     font-size: 15px;
     border: none;
     border-radius: 10px;
+    background-color: white;
+    color: #3d6690;
+    cursor: pointer;
 }
 
-.right_btn{
+.side-button:hover{
+    background-color: #3d6690;
+    color: white;
+}
+
+.right-btn{
     display: flex;
 }
 
-#icon{
+#icon-login{
     margin-top: 10px;
     margin-left: 10px;
     width: 50px;
@@ -51,38 +60,3 @@ a{
     cursor: pointer;
 }
 
-#main{
-    margin-left: 20px;
-    background-color: white;
-    color: #3d6690;
-    cursor: pointer;
-}
-
-#main:hover{
-    background-color: #3d6690;
-    color:white;
-}
-
-#cab{
-    margin-right: 30px;
-    background-color: white;
-    color: #3d6690;
-    cursor: pointer;
-}
-
-#cab:hover{
-    background-color: #3d6690;
-    color: white;
-}
-
-#out{
-    margin-right: 30px;
-    background-color: white;
-    color: #3d6690;
-    cursor: pointer;
-}
-
-#out:hover{
-    background-color: #3d6690;
-    color: white;
-}

@@ -6,32 +6,32 @@
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="/static/css/header_new.css" rel="stylesheet" type="text/css">
-    <link href="/static/materials/icon.png" rel="icon" type="image/x-icon">
-    <link href="/static/css/registration.css" rel="stylesheet" type="text/css">
-    <link href="/static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
 
 <body>
 <div class="wrapper">
     <header class="header">
-        <a href = "/"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
+        <a href = "/"><img id="icon-login" alt="icon" src="../static/materials/icon.png"></a>
         <div class="side">
-            <div class="right_btn">
+            <div class="right-btn">
                 <a href="/">
-                    <div class="btn" id="main">
+                    <div class="side-button" id="main">
                         Главная
                     </div>
                 </a>
                 <a href="/about/">
-                    <div class="btn" id="about">
+                    <div class="side-button" id="about">
                         О проекте
                     </div>
                 </a>
             </div>
-            <div class="right_btn">
+            <div class="right-btn">
                 <a href="/login/">
-                    <div class="btn" id="login">
+                    <div class="side-button" id="login">
                         Войти
                     </div>
                 </a>
@@ -39,60 +39,56 @@
         </div>
     </header>
     <main>
-        <form action="/success/" method="post" class="form">
-
-            <img src="/static/materials/icon.png" id="logo" alt="logo">
-
-            <div class="position">
-                <label for="teacher"></label><input type="radio" name="position" value="teacher" id="teacher" onchange="change()"><label>Учитель</label>
-                <label for="student"></label><input type="radio" name="position" value="student" id="student" onchange="change()"><label>Студент</label>
-                <label for="admin"></label><input type="radio" name="position" value="admin" id="admin" onchange="change()"><label>Администратор</label>
-            </div>
-
-            <label>
-                <input type="email" name="mail" placeholder="Почта" value="">
-            </label>
-            <label>
-                <input type="password" name="password" placeholder="Пароль" value="">
-            </label>
-            <label>
-                <input type="text" name="name" placeholder="Имя" value="">
-            </label>
-            <label>
-                <input type="text" name="surname" placeholder="Фамилия" value="">
-            </label>
-            <label>
-                <input type="text" name="patronymic" placeholder="Отчество" value="">
-            </label>
-
-            <label for="teacher_lang"></label><select id="teacher_lang" class="select field" name="language">
-                <option value="Английский язык">Английский язык</option>
-                <option value="Немецкий язык">Немецкий язык</option>
-                <option value="Французский язык">Французский язык</option>
-                <option value="Испанский язык">Испанский язык</option>
-                <option value="Китайский язык">Китайский язык</option>
-                <option value="Японский язык">Японский язык</option>
-                <option value="Хинди">Хинди</option>
-                <option value="Иврит">Иврит</option>
-                <option value="Казахский язык">Казахский язык</option>
-                <option value="Чувашский язык">Чувашский язык</option>
-                <option value="Турецкий язык">Турецкий язык</option>
-                <option value="Арабский язык">Арабский язык</option>
-            </select>
-            <label for="experience"></label><input id="experience" class="field" type="number" name="experience" placeholder="Опыт работы" min="0">
-<!--            <label for="salary"></label><input id="salary" class="field" type="number" name="salary" placeholder="Зарплата" value="">-->
-
-            <label for="address"></label><select id="address" class="select field displayBlock" name="address">
-                <option value="address #1">address #1</option>
-                <option value="address #2">address #2</option>
-                <option value="address #3">address #3</option>
-                <option value="address #4">address #4</option>
-            </select>
-
-            <label for="phone"></label><input id="phone" class="field displayBlock" type="tel" name="phone" placeholder="89201112233">
-            <button class="form-btn">Регистрация</button>
-            © 2022
-        </form>
+        <div class="registration-main">
+            <form action="/success/" method="post" class="registration-form">
+                <img src="../static/materials/icon.png" id="registration-logo" alt="logo">
+                <div class="position">
+                    <label for="teacher"></label><input type="radio" name="position" value="teacher" id="teacher" onchange="change()"><label>Учитель</label>
+                    <label for="student"></label><input type="radio" name="position" value="student" id="student" onchange="change()"><label>Студент</label>
+                    <label for="admin"></label><input type="radio" name="position" value="admin" id="admin" onchange="change()"><label>Администратор</label>
+                </div>
+                <label>
+                    <input type="email" name="mail" placeholder="Почта">
+                </label>
+                <label>
+                    <input type="password" name="password" placeholder="Пароль">
+                </label>
+                <label>
+                    <input type="text" name="name" placeholder="Имя">
+                </label>
+                <label>
+                    <input type="text" name="surname" placeholder="Фамилия">
+                </label>
+                <label>
+                    <input type="text" name="patronymic" placeholder="Отчество">
+                </label>
+                <label for="teacher_lang"></label>
+                <select id="teacher_lang" class="registration-select field" name="language">
+                    <option value="Английский язык">Английский язык</option>
+                    <option value="Немецкий язык">Немецкий язык</option>
+                    <option value="Французский язык">Французский язык</option>
+                    <option value="Испанский язык">Испанский язык</option>
+                    <option value="Китайский язык">Китайский язык</option>
+                    <option value="Японский язык">Японский язык</option>
+                    <option value="Хинди">Хинди</option>
+                    <option value="Иврит">Иврит</option>
+                    <option value="Казахский язык">Казахский язык</option>
+                    <option value="Чувашский язык">Чувашский язык</option>
+                    <option value="Турецкий язык">Турецкий язык</option>
+                    <option value="Арабский язык">Арабский язык</option>
+                </select>
+                <label for="experience"></label><input id="experience" class="field" type="number" name="experience" placeholder="Опыт работы" min="0">
+                <label for="address"></label>
+                <select id="address" class="registration-select field displayBlock" name="address">
+                    {{ range $element := .Massive }}
+                    <option>{{ $element }}</option>
+                    {{ end }}
+                </select>
+                <label for="phone"></label><input id="phone" class="field displayBlock" type="tel" name="phone" placeholder="89201112233">
+                <button class="registration-complete">Регистрация</button>
+                © 2022
+            </form>
+        </div>
     </main>
     {{ template "footer" }}
 

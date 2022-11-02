@@ -1,30 +1,30 @@
 {{ define "login" }}
 
 <!DOCTYPE html>
-<html lang = "ru">
+<html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="/static/css/header_new.css" rel="stylesheet" type="text/css">
-    <link href="/static/materials/icon.png" rel="icon" type="image/x-icon">
-    <link href="/static/css/login.css" rel="stylesheet" type="text/css">
-    <link href="/static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
 
 <body>
 <div class="wrapper">
     <header class="header">
-        <a href = "/"><img id="icon" alt="icon" src="/static/materials/icon.png"></a>
+        <a href = "/"><img id="icon-login" alt="icon" src="../static/materials/icon.png"></a>
         <div class="side">
-            <div class="right_btn">
+            <div class="right-btn">
                 <a href="/">
-                    <div class="btn" id="main">
+                    <div class="side-button" id="main">
                         Главная
                     </div>
                 </a>
                 <a href="/about/">
-                    <div class="btn" id="about">
+                    <div class="side-button" id="about">
                         О проекте
                     </div>
                 </a>
@@ -32,13 +32,19 @@
         </div>
     </header>
     <main>
-        <form action="/success/" cmethod="post" class="form">
-            <img src="/static/materials/icon.png" id="logo" alt="logo">
-            <input type="text" name="login" placeholder="Email address">
-            <input type="password" name="password" placeholder="Your password" value="12345">
-            <button class="form-btn">Войти</button>
-            © 2022
-        </form>
+        <div class="login-main">
+            <form action="/success/" method="post" class="login-form">
+                <img src="../static/materials/icon.png" id="login-logo" alt="logo">
+                <label>
+                    <input type="text" name="login" placeholder="Email address">
+                </label>
+                <label>
+                    <input type="password" name="password" placeholder="Your password">
+                </label>
+                <button class="login-complete">Войти</button>
+                © 2022
+            </form>
+        </div>
     </main>
 
     {{ template "footer" }}
