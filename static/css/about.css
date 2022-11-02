@@ -1,17 +1,16 @@
-.success-alert{
+.about-back{
     display: flex;
     flex-direction: column;
     width: min-content;
     background-color: #88A7C8;
     color: white;
     border-radius: 20px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 3vh;
     align-items: center;
     text-align: center;
     vertical-align: center;
     padding: 20px;
+    font-size: 40px;
+    margin: 17vh auto 1vh;
 }
 
 .about-caption{
@@ -21,8 +20,27 @@
     font-size: 24px;
     color:white;
 }
-
 .about-picture{
+    width: 1280px;
+    height: 420px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+#picture-logins{
+    width: 1350px;
+    height: 350px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+}
+
+#picture-ERD{
     border-radius: 15px;
     margin-bottom: 10px;
     align-items: center;

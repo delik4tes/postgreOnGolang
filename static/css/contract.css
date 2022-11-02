@@ -9,7 +9,7 @@
     color: white;
 }
 
-.contract-main{
+.contract-main {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,8 +17,8 @@
 }
 
 #contract-logo {
-    height: 20px;
-    width: 20px;
+    height: 80px;
+    width: 80px;
     padding-bottom: 15px;
     padding-top: 15px;
 }
@@ -54,20 +54,20 @@
     padding: 10px;
 }
 
-#price{
+#contract-price{
     font-weight: bold;
     text-align: center;
     background-color: #88A7C8;
     color:white;
 }
 
-label{
+.contract-label{
     text-align: center;
     font-size: 18px;
     font-weight: bold;
 }
 
-#month{
+#contract-month{
     text-align: center;
 }
 

@@ -3,10 +3,10 @@
 {{ template "header" }}
     <main>
         <div class="contract-main">
-            <form action="/success/" method="post" class="contract-form">
+            <form action="/success/" method="get" class="contract-form">
                 <img src="../static/materials/icon.png" id="contract-logo" alt="logo">
-                <label for="contract-lang">Выберите язык</label>
-                <select id="contract-lang" name="language" class="contract-select" onchange="getprice()">
+                <label for="contract-lang" class="contract-label">Выберите язык</label>
+                <select id="contract-lang" name="contract-lang" class="contract-select" onchange="getprice()">
                     <option value="Английский язык">Английский язык</option>
                     <option value="Немецкий язык">Немецкий язык</option>
                     <option value="Французский язык">Французский язык</option>
@@ -20,13 +20,14 @@
                     <option value="Турецкий язык">Турецкий язык</option>
                     <option value="Арабский язык">Арабский язык</option>
                 </select>
-                <label for="month">Количество месяцев</label><input id="month" value="1" min="1" type="number" name="month" onchange="getprice()">
-                <label for="price">Итоговая цена</label><input id="price" value="1700₽" type="text" name="price" readonly>
+                <label for="contract-month" class="contract-label">Количество месяцев</label><input id="contract-month" value="1" min="1" type="number" name="contract-month" onchange="getprice()">
+                <label for="contract-price" class="contract-label">Итоговая цена</label><input id="contract-price" value="1700₽" type="text" name="contract-price" readonly>
                 <button class="contract-complete">Оформить</button>
                 © 2022
             </form>
         </div>
     </main>
+
 {{ template "footer" }}
 
 {{ end }}

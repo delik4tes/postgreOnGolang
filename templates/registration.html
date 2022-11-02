@@ -40,7 +40,7 @@
     </header>
     <main>
         <div class="registration-main">
-            <form action="/success/" method="post" class="registration-form">
+            <form action="/saveRegistrationForm/" method="get" class="registration-form">
                 <img src="../static/materials/icon.png" id="registration-logo" alt="logo">
                 <div class="position">
                     <label for="teacher"></label><input type="radio" name="position" value="teacher" id="teacher" onchange="change()"><label>Учитель</label>
@@ -77,14 +77,14 @@
                     <option value="Турецкий язык">Турецкий язык</option>
                     <option value="Арабский язык">Арабский язык</option>
                 </select>
-                <label for="experience"></label><input id="experience" class="field" type="number" name="experience" placeholder="Опыт работы" min="0">
+                <label for="experience"></label><input id="experience" class="field" type="number" name="experience" placeholder="Опыт работы" min="0" value="">
                 <label for="address"></label>
                 <select id="address" class="registration-select field displayBlock" name="address">
                     {{ range $element := .Massive }}
-                    <option>{{ $element }}</option>
+                    <option value={{ $element }}>{{ $element }}</option>
                     {{ end }}
                 </select>
-                <label for="phone"></label><input id="phone" class="field displayBlock" type="tel" name="phone" placeholder="89201112233">
+                <label for="phone"></label><input id="phone" class="field displayBlock" type="tel" name="phone" placeholder="89201112233" value="">
                 <button class="registration-complete">Регистрация</button>
                 © 2022
             </form>

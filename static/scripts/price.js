@@ -1,6 +1,6 @@
-let price = document.getElementById("price");
-let lang = document.getElementById("lang");
-let month = document.getElementById("month")
+let price = document.getElementById("contract-price");
+let lang = document.getElementById("contract-lang");
+let month = document.getElementById("contract-month");
 
 const price_english = 1700;
 const price_germany = 1500;

@@ -1,0 +1,29 @@
+.teacher-main {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+}
+
+.teacher-search{
+    margin-top: 3vh;
+    width: 75%;
+    height: 50px;
+    background-color: #88A7C8;
+    font-size: 25px;
+}
+
+.teacher-back{
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    background-color: #88A7C8;
+    color: white;
+    border-radius: 20px;
+    align-items: center;
+    text-align: center;
+    vertical-align: center;
+    padding: 20px;
+    font-size: 15px;
+    margin: 17vh auto 1vh;
+}

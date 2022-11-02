@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -10,11 +11,21 @@ import (
 )
 
 //FIXME работа с app.go:
-// Написать логику в header через {{ }} на демонстрацию кнопки определенной, а не два файла
-// Нормально настроить все css файлы, чтобы не было конфликтов между классами и айди
-// Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
+// -1.Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
+// -2.Переименовать в таблице branch колонку address
+// Учитель:
+//  -1.Договоры на которые он назначен (Сравнивать id учителя контракта и таблицы)
+//  -2.Информацию о своих клиентах (Нужно сравнивать id учителя контракта и таблицы, получать id клиента и выводить все данные связанные с ним)
+// Клиент:
+//  -1.Просмотр доступных языков и их преподавателей
+// Администратор:
+//  -1.Просмотр и редактирование всех договоров
+//  -2.Установка зарплаты для учителя
+//  -3.Ставить статус договора
+// Владелец:
+//  -1.Полный доступ (объединить все предыдущие возможности + добавить недостающие)
 
-//TODO: Добавить функцию в PostgreSQL сколько всего учиться учеников в каждом фелиале
+//TODO: Добавить функцию в PostgreSQL сколько всего учиться учеников в каждом филиале
 
 const password = " password=postgres"
 const user = "user=postgres"
@@ -24,19 +35,39 @@ const sslmode = " sslmode=disable"
 const connectParam = user + password + dbname + sslmode
 
 type Branch struct {
+	Id                                        uint16
+	Address, Name, Surname, Patronymic, Login string
+	Salary                                    float32
 }
 
-type Clients struct {
+type Client struct {
+	Id, Branch                              uint16
+	Name, Surname, Patronymic, Phone, Login string
 }
 
 type Contract struct {
+	Id, Client, Teacher uint16
+	Quantity            uint32
+	Language, Status    string
+	Price               float32
 }
 
-type Teachers struct {
+type Teacher struct {
+	Id, Branch, Experience                     uint16
+	Name, Surname, Patronymic, Language, Login string
+	Salary                                     float32
 }
 
-type Logins struct {
+type Login struct {
+	Email, Password, Login string
+	Status                 rune
 }
+
+var tableBranches []Branch
+var tableClients []Client
+var tableContracts []Contract
+var tableTeachers []Teacher
+var tableLogins []Login
 
 type Parameter struct {
 	Reg_alert string
@@ -46,82 +77,114 @@ type Parameter struct {
 	Authorization bool
 }
 
-type Test struct {
-	Massive [3]string
-}
-
-var reg bool = false
+//-------------------
 
 var parametrs Parameter = Parameter{"Вы успешно зарегистрировались", "Вы успешно вошли", false, false}
 
-var test Test = Test{[3]string{"One", "Two", "Three"}}
+//fmt.Println(request.URL.Query())
 
-func mainPage(w http.ResponseWriter, r *http.Request) {
+// -------------------
 
-	if !reg {
-		main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header_new.html")
-		err = main.ExecuteTemplate(w, "main", parametrs)
-		if err != nil {
-			panic(err)
-		}
-	} else {
-		main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header.html")
-		err = main.ExecuteTemplate(w, "main", parametrs)
-		if err != nil {
-			panic(err)
-		}
+func mainPage(w http.ResponseWriter, request *http.Request) {
+
+	main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header_new.html")
+	err = main.ExecuteTemplate(w, "main", nil)
+	if err != nil {
+		panic(err)
 	}
 
-	//Если сделана полностью страница html header+main+footer
-	// test, err := template.ParseFiles("templates/hello_page.html")
-	// err = test.Execute(w, nil)
 }
 
-func aboutPage(w http.ResponseWriter, r *http.Request) {
+func aboutPage(writer http.ResponseWriter, request *http.Request) {
 	about, err := template.ParseFiles("templates/about.html", "templates/footer.html", "templates/header_new.html")
-	err = about.ExecuteTemplate(w, "about", nil)
-
-	//fmt.Println(r.URL.Query())
+	err = about.ExecuteTemplate(writer, "about", nil)
 
 	if err != nil {
 		panic(err)
 	}
 }
-func loginPage(w http.ResponseWriter, r *http.Request) {
+func loginPage(writer http.ResponseWriter, request *http.Request) {
+
 	login, err := template.ParseFiles("templates/login.html", "templates/footer.html")
-	err = login.ExecuteTemplate(w, "login", nil)
+	err = login.ExecuteTemplate(writer, "login", nil)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func registrationPage(w http.ResponseWriter, r *http.Request) {
+func registrationPage(writer http.ResponseWriter, request *http.Request) {
 	registration, err := template.ParseFiles("templates/registration.html", "templates/footer.html")
-	err = registration.ExecuteTemplate(w, "registration", test)
-
-	reg, parametrs.Alrt = true, true
+	err = registration.ExecuteTemplate(writer, "registration", nil)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func contractPage(w http.ResponseWriter, r *http.Request) {
+func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result := request.URL.Query()
+	fmt.Println(result["language"])
+	fmt.Println(request.FormValue("position"), request.FormValue("email"), request.FormValue("surname"), request.FormValue("address"), request.FormValue("phone"))
+	http.Redirect(writer, request, "/success/", http.StatusSeeOther)
+}
+
+func contractPage(writer http.ResponseWriter, request *http.Request) {
 	contract, err := template.ParseFiles("templates/contract.html", "templates/footer.html", "templates/header_new.html")
-	err = contract.ExecuteTemplate(w, "contract", nil)
+	err = contract.ExecuteTemplate(writer, "contract", nil)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
-func successPage(w http.ResponseWriter, r *http.Request) {
+func successPage(writer http.ResponseWriter, request *http.Request) {
 
 	success, err := template.ParseFiles("templates/success.html", "templates/footer.html", "templates/header.html")
-	err = success.ExecuteTemplate(w, "success", parametrs)
+	err = success.ExecuteTemplate(writer, "success", parametrs)
 
-	fmt.Println(r.URL.Query())
+	if err != nil {
+		panic(err)
+	}
+}
+
+func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result, err := db.Query("SELECT * FROM teachers")
+
+	for result.Next() {
+		var tmp Teacher
+		err = result.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		tableTeachers = append(tableTeachers, tmp)
+	}
+
+	teacher, err := template.ParseFiles("templates/teacher.html")
+	err = teacher.Execute(writer, tableTeachers)
 
 	if err != nil {
 		panic(err)
@@ -134,8 +197,11 @@ func handlerRequest() {
 	router.HandleFunc("/about/", aboutPage).Methods("GET")
 	router.HandleFunc("/login/", loginPage)
 	router.HandleFunc("/registration/", registrationPage)
+	router.HandleFunc("/saveRegistrationForm/", saveRegistrationForm)
 	router.HandleFunc("/contract/", contractPage)
 	router.HandleFunc("/success/", successPage)
+
+	router.HandleFunc("/teacher/", teacherCabinet)
 
 	http.Handle("/", router)
 	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./static/"))))
