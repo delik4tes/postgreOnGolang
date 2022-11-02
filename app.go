@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"html/template"
@@ -70,16 +69,16 @@ var tableTeachers []Teacher
 var tableLogins []Login
 
 type Parameter struct {
-	Reg_alert string
-	Log_alert string
-	Alrt      bool
+	RegAlert string
+	LogAlert string
+	Alrt     bool
 
 	Authorization bool
 }
 
 //-------------------
 
-var parametrs Parameter = Parameter{"Вы успешно зарегистрировались", "Вы успешно вошли", false, false}
+var parameters Parameter = Parameter{"Вы успешно зарегистрировались", "Вы успешно вошли", false, false}
 
 //fmt.Println(request.URL.Query())
 
@@ -114,8 +113,32 @@ func loginPage(writer http.ResponseWriter, request *http.Request) {
 }
 
 func registrationPage(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result, err := db.Query("SELECT address FROM branch")
+	var addresses []string
+	for result.Next() {
+		var address string
+		err := result.Scan(&address)
+		if err != nil {
+			return
+		}
+		addresses = append(addresses, address)
+	}
+
 	registration, err := template.ParseFiles("templates/registration.html", "templates/footer.html")
-	err = registration.ExecuteTemplate(writer, "registration", nil)
+	err = registration.ExecuteTemplate(writer, "registration", addresses)
 
 	if err != nil {
 		panic(err)
@@ -137,8 +160,32 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 	}(db)
 
 	result := request.URL.Query()
-	fmt.Println(result["language"])
-	fmt.Println(request.FormValue("position"), request.FormValue("email"), request.FormValue("surname"), request.FormValue("address"), request.FormValue("phone"))
+
+	if result["position"][0] == "student" {
+		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)", result["mail"][0], result["password"][0], "S")
+		if err != nil {
+			panic(err)
+		}
+		id := db.QueryRow("SELECT id FROM branch WHERE address = $1", result["address"][0])
+		var idBranch string
+		err = id.Scan(&idBranch)
+		if err != nil {
+			panic(err)
+		}
+		mail := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
+		var studentLogin string
+		err = mail.Scan(&studentLogin)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = db.Exec("INSERT INTO clients (name,surname,patronymic,branch,phone, login) VALUES ($1,$2,$3,$4,$5,$6)", result["name"][0], result["surname"][0], result["patronymic"][0], idBranch, result["phone"][0], studentLogin)
+	} else if result["position"][0] == "teacher" {
+		_, err = db.Exec("INSERT INTO ")
+	} else if result["position"][0] == "admin" {
+		_, err = db.Exec("INSERT INTO ")
+	}
+
 	http.Redirect(writer, request, "/success/", http.StatusSeeOther)
 }
 
@@ -154,7 +201,7 @@ func contractPage(writer http.ResponseWriter, request *http.Request) {
 func successPage(writer http.ResponseWriter, request *http.Request) {
 
 	success, err := template.ParseFiles("templates/success.html", "templates/footer.html", "templates/header.html")
-	err = success.ExecuteTemplate(writer, "success", parametrs)
+	err = success.ExecuteTemplate(writer, "success", parameters)
 
 	if err != nil {
 		panic(err)
