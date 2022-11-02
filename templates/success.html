@@ -3,18 +3,18 @@
 {{ template "header" }}
 
 <main>
-    <div class="back-note">
+    <div class="success-alert">
         {{ if .Alrt }}
         {{ .Reg_alert }}
         {{ else }}
         {{ .Log_alert }}
         {{ end }}
+        <a href="/">
+            <div class="back-button">
+                Вернуться обратно
+            </div>
+        </a>
     </div>
-    <a href="/">
-        <div class="button">
-            Вернуться обратно
-        </div>
-    </a>
 </main>
 
 
