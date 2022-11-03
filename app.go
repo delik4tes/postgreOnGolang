@@ -10,7 +10,7 @@ import (
 )
 
 //FIXME работа с app.go:
-// -1.Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
+// -1. Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
 // -2.Переименовать в таблице branch колонку address
 // Учитель:
 //  -1.Договоры на которые он назначен (Сравнивать id учителя контракта и таблицы)
@@ -74,7 +74,7 @@ var tableContracts []Contract
 var tableTeachers []Teacher
 var tableLogins []Login
 
-var parameters Parameter = Parameter{"", false, false, false}
+var parameters = Parameter{"", false, false, false}
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
@@ -123,7 +123,11 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 
 	tmp := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["login"][0])
 	var check string
-	tmp.Scan(&check)
+	err = tmp.Scan(&check)
+	if err != nil {
+		panic(err)
+	}
+
 	if check != "" {
 		//Пользователя с таким логином есть
 	} else {
