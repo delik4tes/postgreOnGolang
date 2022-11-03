@@ -85,3 +85,23 @@
 .contract-select:hover{
     cursor: pointer;
 }
+
+.contract-select-lang{
+    width: 290px;
+    height: 40px;
+    appearance: none;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 10px;
+    border-color: #14385E;
+    outline: none;
+    display: none;
+}
+
+.contract-select-lang:hover{
+    cursor: pointer;
+}
+
+.displayLanguage {
+    display: block; !important;
+}

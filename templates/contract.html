@@ -3,10 +3,10 @@
 {{ template "header" }}
     <main>
         <div class="contract-main">
-            <form action="/success/" method="get" class="contract-form">
+            <form action="/saveContract/" method="get" class="contract-form">
                 <img src="../static/materials/icon.png" id="contract-logo" alt="logo">
                 <label for="contract-lang" class="contract-label">Выберите язык</label>
-                <select id="contract-lang" name="contract-lang" class="contract-select" onchange="getprice()">
+                <select id="contract-lang" name="contract-lang" class="contract-select" onchange="getInfo()">
                     <option value="Английский язык">Английский язык</option>
                     <option value="Немецкий язык">Немецкий язык</option>
                     <option value="Французский язык">Французский язык</option>
@@ -20,7 +20,93 @@
                     <option value="Турецкий язык">Турецкий язык</option>
                     <option value="Арабский язык">Арабский язык</option>
                 </select>
-                <label for="contract-month" class="contract-label">Количество месяцев</label><input id="contract-month" value="1" min="1" type="number" name="contract-month" onchange="getprice()">
+
+                <label class="contract-label">Выберите преподавателя</label>
+                <select id="contract-english" name="contract-english" class="contract-select-lang displayLanguage" >
+                    {{ range $lang := .English }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-germany" name="contract-germany" class="contract-select-lang">
+                    {{ range $lang := .Germany }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-french" name="contract-french" class="contract-select-lang">
+                    {{ range $lang := .French }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-spanish" name="contract-spanish" class="contract-select-lang">
+                    {{ range $lang := .Spanish }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-china" name="contract-china" class="contract-select-lang">
+                    {{ range $lang := .China }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-japan" name="contract-japan" class="contract-select-lang">
+                    {{ range $lang := .Japan }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-hindi" name="contract-hindi" class="contract-select-lang">
+                    {{ range $lang := .Hindi }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-hebrew" name="contract-hebrew" class="contract-select-lang">
+                    {{ range $lang := .Hebrew }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-kazakh" name="contract-kazakh" class="contract-select-lang">
+                    {{ range $lang := .Kazakh }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-chuvash" name="contract-chuvash" class="contract-select-lang">
+                    {{ range $lang := .Chuvash }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-turkish" name="contract-turkish" class="contract-select-lang">
+                    {{ range $lang := .Turkish }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <select id="contract-arabic" name="contract-arabic" class="contract-select-lang">
+                    {{ range $lang := .Arabic }}
+                    <option value={{ $lang.Login }}>
+                        {{ $lang.Name }} {{ $lang.Surname }} {{ $lang.Patronymic }} </option>
+                    {{ end }}
+                </select>
+
+                <label for="contract-month" class="contract-label">Количество месяцев</label><input id="contract-month" value="1" min="1" type="number" name="contract-month" onchange="getInfo()">
                 <label for="contract-price" class="contract-label">Итоговая цена</label><input id="contract-price" value="1700₽" type="text" name="contract-price" readonly>
                 <button class="contract-complete">Оформить</button>
                 © 2022

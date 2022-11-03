@@ -14,7 +14,7 @@ function change (){
         teacher_lang.classList.add("displayBlock");
         address.classList.add("displayBlock");
         phone.classList.remove("displayBlock");
-        insertAddress.classList.remove("displayBlock")
+        insertAddress.classList.remove("displayBlock");
     }
     if (student.checked){
         experience.classList.remove("displayBlock");

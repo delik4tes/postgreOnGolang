@@ -2,11 +2,13 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	"html/template"
 	"log"
 	"net/http"
+	"strings"
 )
 
 //FIXME работа с app.go:
@@ -64,9 +66,29 @@ type Login struct {
 }
 
 type Parameter struct {
-	Message                              string
-	Out, Login, Registration             bool
-	OutMask, LoginMask, RegistrationMask bool
+	Message                                      string
+	Out, Login, Registration                     bool
+	OutMask, LoginMask, RegistrationMask         bool
+	Authorization, checkStudent, successContract bool
+}
+
+type User struct {
+	Status, Login string
+}
+
+type Language struct {
+	English []Teacher
+	Germany []Teacher
+	French  []Teacher
+	Spanish []Teacher
+	China   []Teacher
+	Japan   []Teacher
+	Hindi   []Teacher
+	Hebrew  []Teacher
+	Kazakh  []Teacher
+	Chuvash []Teacher
+	Turkish []Teacher
+	Arabic  []Teacher
 }
 
 var tableBranches []Branch
@@ -82,9 +104,13 @@ var parameters = Parameter{
 	false,
 	false,
 	false,
+	false,
+	true,
+	true,
 	false}
 
-var currentUser string = ""
+var currentUser = User{"admin", "admin"}
+var languages Language
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
@@ -147,7 +173,7 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if check != "" {
-		currentUser = check
+		currentUser.Login = check
 		parameters.Login = true
 		parameters.LoginMask = true
 		parameters.Registration = false
@@ -239,7 +265,7 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
-		currentUser = studentLogin
+		currentUser.Login = studentLogin
 
 	} else if result["position"][0] == "teacher" {
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
@@ -263,7 +289,7 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
-		currentUser = teacherLogin
+		currentUser.Login = teacherLogin
 
 	} else if result["position"][0] == "admin" {
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
@@ -282,7 +308,7 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
-		currentUser = adminLogin
+		currentUser.Login = adminLogin
 	}
 
 	parameters.Login = true
@@ -309,9 +335,9 @@ func checkOut(writer http.ResponseWriter, request *http.Request) {
 
 func contractPage(writer http.ResponseWriter, request *http.Request) {
 
-	if !(parameters.Login && parameters.Registration) {
-		//добавить флаг для определения не авторизован он или нет
-		http.Redirect(writer, request, "", http.StatusSeeOther)
+	if !(parameters.Login || parameters.Registration) {
+		parameters.Authorization = false
+		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 
 	db, err := sql.Open("postgres", connectParam)
@@ -326,24 +352,141 @@ func contractPage(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	status := db.QueryRow("SELECT status FROM logins WHERE login = $1", currentUser)
-	var currentUserStatus string
-	err = status.Scan(&currentUserStatus)
+	status := db.QueryRow("SELECT status FROM logins WHERE login = $1", currentUser.Login)
+	err = status.Scan(&currentUser.Status)
 	if err != nil {
 		panic(err)
 	}
 
-	if currentUserStatus != "student" {
-		//добавить флаг для определения не авторизован он или нет
-		http.Redirect(writer, request, "", http.StatusSeeOther)
+	if currentUser.Status != "S" {
+		parameters.checkStudent = false
+		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
+
+	english, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Английский язык")
+	for english.Next() {
+		var tmp Teacher
+		_ = english.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.English = append(languages.English, tmp)
+	}
+
+	germany, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Немецкий язык")
+	for germany.Next() {
+		var tmp Teacher
+		_ = germany.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Germany = append(languages.Germany, tmp)
+	}
+
+	french, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Французский язык")
+	for french.Next() {
+		var tmp Teacher
+		_ = french.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.French = append(languages.French, tmp)
+	}
+
+	spanish, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Испанский язык")
+	for spanish.Next() {
+		var tmp Teacher
+		_ = spanish.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Spanish = append(languages.Spanish, tmp)
+	}
+
+	china, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Китайский язык")
+	for china.Next() {
+		var tmp Teacher
+		_ = china.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.China = append(languages.China, tmp)
+	}
+
+	japan, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Японский язык")
+	for japan.Next() {
+		var tmp Teacher
+		_ = japan.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Japan = append(languages.Japan, tmp)
+	}
+
+	hindi, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Хинди")
+	for hindi.Next() {
+		var tmp Teacher
+		_ = hindi.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Hindi = append(languages.Hindi, tmp)
+	}
+
+	hebrew, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Иврит")
+	for hebrew.Next() {
+		var tmp Teacher
+		_ = hebrew.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Hebrew = append(languages.Hebrew, tmp)
+	}
+
+	kazakh, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Казахский язык")
+	for kazakh.Next() {
+		var tmp Teacher
+		_ = kazakh.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Kazakh = append(languages.Kazakh, tmp)
+	}
+
+	chuvash, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Чувашский язык")
+	for chuvash.Next() {
+		var tmp Teacher
+		_ = chuvash.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Chuvash = append(languages.Chuvash, tmp)
+	}
+
+	turkish, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Турецкий язык")
+	for turkish.Next() {
+		var tmp Teacher
+		_ = turkish.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Turkish = append(languages.Turkish, tmp)
+	}
+
+	arabic, err := db.Query("SELECT * FROM teachers WHERE language=$1", "Арабский язык")
+	for arabic.Next() {
+		var tmp Teacher
+		_ = arabic.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
+		languages.Arabic = append(languages.Arabic, tmp)
+	}
+
+	parameters.Authorization = true
+	parameters.checkStudent = true
+	parameters.successContract = false
 
 	contract, err := template.ParseFiles("templates/contract.html", "templates/footer.html", "templates/header.html")
-	err = contract.ExecuteTemplate(writer, "contract", nil)
+	err = contract.ExecuteTemplate(writer, "contract", languages)
 
 	if err != nil {
 		panic(err)
 	}
+}
+
+func saveContract(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result := request.URL.Query()
+
+	//idClient := db.QueryRow()
+	//idTeacher := db.QueryRow()
+
+	contractPrice := strings.Trim(result["contract-dynamic_contract"][0], "₽")
+	fmt.Println(contractPrice)
+
+	_, err = db.Exec("INSERT INTO contract (client,teacher,language,quantity,dynamic_contract) VALUES ($1,$2,$3,$4,$5)",
+		result["contract-language"][0], result["contract-month"][0], contractPrice)
+
+	parameters.successContract = true
+
+	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
 func alertPage(writer http.ResponseWriter, request *http.Request) {
@@ -368,6 +511,13 @@ func alertPage(writer http.ResponseWriter, request *http.Request) {
 		if parameters.Out {
 			parameters.Message = "Успешный выход из личного кабинета"
 		}
+	}
+
+	if parameters.successContract {
+		parameters.Message = "Успешная запись на курс"
+	}
+	if !parameters.checkStudent {
+		parameters.Message = "Записаться на курс можно только учеником"
 	}
 
 	if parameters.Out {
@@ -428,6 +578,7 @@ func handlerRequest() {
 	router.HandleFunc("/saveRegistrationForm/", saveRegistrationForm)
 	router.HandleFunc("/contract/", contractPage)
 	router.HandleFunc("/checkOut/", checkOut)
+	router.HandleFunc("/saveContract/", saveContract)
 
 	router.HandleFunc("/teacher/", teacherCabinet)
 	router.HandleFunc("/alert/", alertPage)
