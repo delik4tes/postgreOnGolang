@@ -63,27 +63,18 @@ type Login struct {
 	Status                 rune
 }
 
+type Parameter struct {
+	Message                  string
+	Out, Login, Registration bool
+}
+
 var tableBranches []Branch
 var tableClients []Client
 var tableContracts []Contract
 var tableTeachers []Teacher
 var tableLogins []Login
 
-type Parameter struct {
-	RegAlert string
-	LogAlert string
-	Alrt     bool
-
-	Authorization bool
-}
-
-//-------------------
-
-var parameters Parameter = Parameter{"Вы успешно зарегистрировались", "Вы успешно вошли", false, false}
-
-//fmt.Println(request.URL.Query())
-
-// -------------------
+var parameters Parameter = Parameter{"", false, false, false}
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
@@ -103,6 +94,7 @@ func aboutPage(writer http.ResponseWriter, request *http.Request) {
 		panic(err)
 	}
 }
+
 func loginPage(writer http.ResponseWriter, request *http.Request) {
 
 	login, err := template.ParseFiles("templates/login.html", "templates/footer.html")
@@ -111,6 +103,34 @@ func loginPage(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result := request.URL.Query()
+
+	tmp := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["login"][0])
+	var check string
+	tmp.Scan(&check)
+	if check != "" {
+		//Пользователя с таким логином есть
+	} else {
+		//Пользователя с таким логином нет
+	}
+
+	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
 func registrationPage(writer http.ResponseWriter, request *http.Request) {
@@ -226,10 +246,23 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	http.Redirect(writer, request, "/success/", http.StatusSeeOther)
+	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
 func contractPage(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
 	contract, err := template.ParseFiles("templates/contract.html", "templates/footer.html", "templates/header_new.html")
 	err = contract.ExecuteTemplate(writer, "contract", nil)
 
@@ -238,10 +271,10 @@ func contractPage(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func successPage(writer http.ResponseWriter, request *http.Request) {
+func alertPage(writer http.ResponseWriter, request *http.Request) {
 
-	success, err := template.ParseFiles("templates/success.html", "templates/footer.html", "templates/header.html")
-	err = success.ExecuteTemplate(writer, "success", parameters)
+	alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header.html")
+	err = alert.ExecuteTemplate(writer, "alert", parameters)
 
 	if err != nil {
 		panic(err)
@@ -283,10 +316,11 @@ func handlerRequest() {
 	router.HandleFunc("/", mainPage).Methods("GET")
 	router.HandleFunc("/about/", aboutPage).Methods("GET")
 	router.HandleFunc("/login/", loginPage)
+	router.HandleFunc("/checkLoginForm/", checkLoginForm)
 	router.HandleFunc("/registration/", registrationPage)
 	router.HandleFunc("/saveRegistrationForm/", saveRegistrationForm)
 	router.HandleFunc("/contract/", contractPage)
-	router.HandleFunc("/success/", successPage)
+	router.HandleFunc("/alert/", alertPage)
 
 	router.HandleFunc("/teacher/", teacherCabinet)
 

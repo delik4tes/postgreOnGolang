@@ -4,11 +4,7 @@
 
 <main>
     <div class="success-alert">
-        {{ if .Alrt }}
-        {{ .RegAlert }}
-        {{ else }}
-        {{ .LogAlert }}
-        {{ end }}
+        {{ .Message }}
         <a href="/">
             <div class="back-button">
                 Вернуться обратно
