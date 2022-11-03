@@ -64,8 +64,9 @@ type Login struct {
 }
 
 type Parameter struct {
-	Message                  string
-	Out, Login, Registration bool
+	Message                              string
+	Out, Login, Registration             bool
+	OutMask, LoginMask, RegistrationMask bool
 }
 
 var tableBranches []Branch
@@ -74,16 +75,33 @@ var tableContracts []Contract
 var tableTeachers []Teacher
 var tableLogins []Login
 
-var parameters = Parameter{"", false, false, false}
+var parameters = Parameter{
+	"",
+	true,
+	false,
+	false,
+	false,
+	false,
+	false}
+
+var currentUser string = ""
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
-	main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header_new.html")
-	err = main.ExecuteTemplate(w, "main", nil)
-	if err != nil {
-		panic(err)
-	}
+	if parameters.Login || parameters.Registration {
+		main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header.html")
+		err = main.ExecuteTemplate(w, "main", nil)
+		if err != nil {
+			panic(err)
+		}
 
+	} else if parameters.Out {
+		main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header_new.html")
+		err = main.ExecuteTemplate(w, "main", nil)
+		if err != nil {
+			panic(err)
+		}
+	}
 }
 
 func aboutPage(writer http.ResponseWriter, request *http.Request) {
@@ -129,9 +147,20 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if check != "" {
-		//Пользователя с таким логином есть
+		currentUser = check
+		parameters.Login = true
+		parameters.LoginMask = true
+		parameters.Registration = false
+		parameters.RegistrationMask = false
+		parameters.Out = false
+		parameters.OutMask = false
+
 	} else {
-		//Пользователя с таким логином нет
+		parameters.Login = false
+		parameters.LoginMask = true
+		parameters.Registration = false
+		parameters.Out = true
+		parameters.OutMask = false
 	}
 
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
@@ -210,6 +239,8 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
+		currentUser = studentLogin
+
 	} else if result["position"][0] == "teacher" {
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
 			result["mail"][0], result["password"][0], "T")
@@ -232,6 +263,8 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
+		currentUser = teacherLogin
+
 	} else if result["position"][0] == "admin" {
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
 			result["mail"][0], result["password"][0], "A")
@@ -248,12 +281,38 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			panic(err)
 		}
+
+		currentUser = adminLogin
 	}
+
+	parameters.Login = true
+	parameters.LoginMask = false
+	parameters.Registration = true
+	parameters.RegistrationMask = true
+	parameters.Out = false
+	parameters.OutMask = false
+
+	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
+}
+
+func checkOut(writer http.ResponseWriter, request *http.Request) {
+
+	parameters.Login = false
+	parameters.LoginMask = false
+	parameters.Registration = false
+	parameters.RegistrationMask = false
+	parameters.Out = true
+	parameters.OutMask = true
 
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
 func contractPage(writer http.ResponseWriter, request *http.Request) {
+
+	if !(parameters.Login && parameters.Registration) {
+		//добавить флаг для определения не авторизован он или нет
+		http.Redirect(writer, request, "", http.StatusSeeOther)
+	}
 
 	db, err := sql.Open("postgres", connectParam)
 	if err != nil {
@@ -267,7 +326,19 @@ func contractPage(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	contract, err := template.ParseFiles("templates/contract.html", "templates/footer.html", "templates/header_new.html")
+	status := db.QueryRow("SELECT status FROM logins WHERE login = $1", currentUser)
+	var currentUserStatus string
+	err = status.Scan(&currentUserStatus)
+	if err != nil {
+		panic(err)
+	}
+
+	if currentUserStatus != "student" {
+		//добавить флаг для определения не авторизован он или нет
+		http.Redirect(writer, request, "", http.StatusSeeOther)
+	}
+
+	contract, err := template.ParseFiles("templates/contract.html", "templates/footer.html", "templates/header.html")
 	err = contract.ExecuteTemplate(writer, "contract", nil)
 
 	if err != nil {
@@ -277,12 +348,44 @@ func contractPage(writer http.ResponseWriter, request *http.Request) {
 
 func alertPage(writer http.ResponseWriter, request *http.Request) {
 
-	alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header.html")
-	err = alert.ExecuteTemplate(writer, "alert", parameters)
-
-	if err != nil {
-		panic(err)
+	if parameters.LoginMask {
+		if parameters.Login {
+			parameters.Message = "Успешная авторизация в систему"
+		} else {
+			parameters.Message = "Вход в систему не выполнен"
+		}
 	}
+
+	if parameters.RegistrationMask {
+		if parameters.Registration {
+			parameters.Message = "Успешная регистрация в систему"
+		} else {
+			parameters.Message = "Регистрация не выполнена"
+		}
+	}
+
+	if parameters.OutMask {
+		if parameters.Out {
+			parameters.Message = "Успешный выход из личного кабинета"
+		}
+	}
+
+	if parameters.Out {
+		alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header_new.html")
+		err = alert.ExecuteTemplate(writer, "alert", parameters)
+
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header.html")
+		err = alert.ExecuteTemplate(writer, "alert", parameters)
+
+		if err != nil {
+			panic(err)
+		}
+	}
+
 }
 
 func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
@@ -324,9 +427,10 @@ func handlerRequest() {
 	router.HandleFunc("/registration/", registrationPage)
 	router.HandleFunc("/saveRegistrationForm/", saveRegistrationForm)
 	router.HandleFunc("/contract/", contractPage)
-	router.HandleFunc("/alert/", alertPage)
+	router.HandleFunc("/checkOut/", checkOut)
 
 	router.HandleFunc("/teacher/", teacherCabinet)
+	router.HandleFunc("/alert/", alertPage)
 
 	http.Handle("/", router)
 	http.Handle("/static/", http.StripPrefix("/static", http.FileServer(http.Dir("./static/"))))
