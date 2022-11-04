@@ -12,8 +12,6 @@ import (
 )
 
 //FIXME работа с app.go:
-// -1.Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
-// -2.Переименовать в таблице branch колонку address
 // Учитель:
 //  -1.Договоры на которые он назначен (Сравнивать id учителя контракта и таблицы)
 //  -2.Информацию о своих клиентах (Нужно сравнивать id учителя контракта и таблицы, получать id клиента и выводить все данные связанные с ним)
@@ -644,6 +642,41 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 
 func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	id := db.QueryRow("SELECT id FROM clients WHERE login = $1", currentUser.Login)
+	var idStudent string
+	_ = id.Scan(&idStudent)
+
+	res, err := db.Query("SELECT * FROM contracts WHERE client = $1", idStudent)
+	if err != nil {
+		panic(err)
+	}
+
+	for res.Next() {
+		var contract Contract
+		_ = res.Scan(&contract.Id, &contract.Client, &contract.Teacher,
+			&contract.Language, &contract.Quantity, &contract.Price,
+			&contract.Date, &contract.Status)
+		tableContracts = append(tableContracts, contract)
+	}
+
+	student, err := template.ParseFiles("templates/student.html")
+	err = student.Execute(writer, tableContracts)
+
+	if err != nil {
+		panic(err)
+	}
 }
 
 func handlerRequest() {
