@@ -12,13 +12,11 @@ import (
 )
 
 //FIXME работа с app.go:
-// -1. Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
+// -1.Написать структуры для каждой группы пользователей, в каждой структуре будут свои команды, которые потом можно будет повторно использовать
 // -2.Переименовать в таблице branch колонку address
 // Учитель:
 //  -1.Договоры на которые он назначен (Сравнивать id учителя контракта и таблицы)
 //  -2.Информацию о своих клиентах (Нужно сравнивать id учителя контракта и таблицы, получать id клиента и выводить все данные связанные с ним)
-// Клиент:
-//  -1.Просмотр доступных языков и их преподавателей
 // Администратор:
 //  -1.Просмотр и редактирование всех договоров
 //  -2.Установка зарплаты для учителя
@@ -48,10 +46,10 @@ type Client struct {
 }
 
 type Contract struct {
-	Id, Client, Teacher uint16
-	Quantity            uint32
-	Language, Status    string
-	Price               float32
+	Id, Client, Teacher    uint16
+	Quantity               uint32
+	Language, Status, Date string
+	Price                  float32
 }
 
 type Teacher struct {
@@ -91,6 +89,11 @@ type Language struct {
 	Arabic  []Teacher
 }
 
+type ContractsAndClients struct {
+	Contracts []Contract
+	Clients   []Client
+}
+
 var tableBranches []Branch
 var tableClients []Client
 var tableContracts []Contract
@@ -109,8 +112,9 @@ var parameters = Parameter{
 	true,
 	false}
 
-var currentUser = User{"admin", "admin"}
+var currentUser User
 var languages Language
+var contractsAndClients ContractsAndClients
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
@@ -180,6 +184,7 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 		parameters.RegistrationMask = false
 		parameters.Out = false
 		parameters.OutMask = false
+		parameters.Authorization = true
 
 	} else {
 		parameters.Login = false
@@ -268,9 +273,15 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		currentUser.Login = studentLogin
 
 	} else if result["position"][0] == "teacher" {
+
+		tmp := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
+		var check string
+		err = tmp.Scan(&check)
+
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
 			result["mail"][0], result["password"][0], "T")
 		if err != nil {
+			fmt.Println(result)
 			panic(err)
 		}
 		id := db.QueryRow("SELECT id FROM branch WHERE address = $1", result["address"][0])
@@ -283,8 +294,8 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
-		_, err = db.Exec("INSERT INTO teachers (name,surname,patronymic,language,experience,login,branch) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)",
-			result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"], teacherLogin, idBranch)
+		_, err = db.Exec("INSERT INTO teachers (name,surname,patronymic,language,experience,login,branch) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+			result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"][0], teacherLogin, idBranch)
 		if err != nil {
 			panic(err)
 		}
@@ -297,11 +308,9 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-
 		mail := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
 		var adminLogin string
 		err = mail.Scan(&adminLogin)
-
 		_, err = db.Exec("INSERT INTO branch (name,surname,patronymic,address,login) VALUES ($1,$2,$3,$4,$5)",
 			result["name"][0], result["surname"][0], result["patronymic"][0], result["insert-address"][0], adminLogin)
 		if err != nil {
@@ -311,6 +320,7 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		currentUser.Login = adminLogin
 	}
 
+	parameters.Authorization = true
 	parameters.Login = true
 	parameters.LoginMask = false
 	parameters.Registration = true
@@ -330,13 +340,15 @@ func checkOut(writer http.ResponseWriter, request *http.Request) {
 	parameters.Out = true
 	parameters.OutMask = true
 
+	currentUser = User{"", ""}
+	parameters.Authorization = false
+
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
 func contractPage(writer http.ResponseWriter, request *http.Request) {
 
-	if !(parameters.Login || parameters.Registration) {
-		parameters.Authorization = false
+	if !parameters.Authorization {
 		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 
@@ -520,6 +532,10 @@ func alertPage(writer http.ResponseWriter, request *http.Request) {
 		parameters.Message = "Записаться на курс можно только учеником"
 	}
 
+	if !parameters.Authorization {
+		parameters.Message = "Сначала нужно авторизоваться в системе"
+	}
+
 	if parameters.Out {
 		alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header_new.html")
 		err = alert.ExecuteTemplate(writer, "alert", parameters)
@@ -538,6 +554,37 @@ func alertPage(writer http.ResponseWriter, request *http.Request) {
 
 }
 
+func checkStatus(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	status := db.QueryRow("SELECT status FROM logins WHERE login = $1", currentUser.Login)
+	err = status.Scan(&currentUser.Status)
+	if err != nil {
+		panic(err)
+	}
+
+	if currentUser.Status == "admin" {
+		http.Redirect(writer, request, "/director/", http.StatusSeeOther)
+	} else if currentUser.Status == "A" {
+		http.Redirect(writer, request, "/admin/", http.StatusSeeOther)
+	} else if currentUser.Status == "S" {
+		http.Redirect(writer, request, "/student/", http.StatusSeeOther)
+	} else if currentUser.Status == "T" {
+		http.Redirect(writer, request, "/teacher/", http.StatusSeeOther)
+	}
+}
+
 func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	db, err := sql.Open("postgres", connectParam)
@@ -552,24 +599,56 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	result, err := db.Query("SELECT * FROM teachers")
+	id := db.QueryRow("SELECT id FROM teachers WHERE login = $1", currentUser.Login)
+	var idTeacher string
+	_ = id.Scan(&idTeacher)
 
-	for result.Next() {
-		var tmp Teacher
-		err = result.Scan(&tmp.Id, &tmp.Branch, &tmp.Name, &tmp.Surname, &tmp.Patronymic, &tmp.Language, &tmp.Salary, &tmp.Experience, &tmp.Login)
-		tableTeachers = append(tableTeachers, tmp)
+	res, _ := db.Query("SELECT * FROM contracts WHERE teacher = $1", idTeacher)
+	for res.Next() {
+		var contract Contract
+		_ = res.Scan(&contract.Id, &contract.Client, &contract.Teacher,
+			&contract.Language, &contract.Quantity, &contract.Price,
+			&contract.Date, &contract.Status)
+		tableContracts = append(tableContracts, contract)
 	}
 
+	for _, contract := range tableContracts {
+		res, _ := db.Query("SELECT * FROM clients WHERE id = $1", contract.Client)
+		for res.Next() {
+			var client Client
+			_ = res.Scan(&client.Id, &client.Name, &client.Surname, &client.Patronymic,
+				&client.Branch, &client.Phone, &client.Login)
+			tableClients = append(tableClients, client)
+		}
+	}
+
+	contractsAndClients.Clients = tableClients
+	contractsAndClients.Contracts = tableContracts
+
 	teacher, err := template.ParseFiles("templates/teacher.html")
-	err = teacher.Execute(writer, tableTeachers)
+	err = teacher.Execute(writer, contractsAndClients)
 
 	if err != nil {
 		panic(err)
 	}
 }
 
+// Полный доступ ко всему просмотру
+func directorCabinet(writer http.ResponseWriter, request *http.Request) {
+
+}
+
+func adminCabinet(writer http.ResponseWriter, request *http.Request) {
+
+}
+
+func studentCabinet(writer http.ResponseWriter, request *http.Request) {
+
+}
+
 func handlerRequest() {
 	router := mux.NewRouter()
+	currentUser = User{"", ""}
 	router.HandleFunc("/", mainPage).Methods("GET")
 	router.HandleFunc("/about/", aboutPage).Methods("GET")
 	router.HandleFunc("/login/", loginPage)
@@ -580,7 +659,12 @@ func handlerRequest() {
 	router.HandleFunc("/checkOut/", checkOut)
 	router.HandleFunc("/saveContract/", saveContract)
 
+	router.HandleFunc("/checkStatus/", checkStatus)
+	router.HandleFunc("/admin/", adminCabinet)
+	router.HandleFunc("/director/", directorCabinet)
+	router.HandleFunc("/student/", studentCabinet)
 	router.HandleFunc("/teacher/", teacherCabinet)
+
 	router.HandleFunc("/alert/", alertPage)
 
 	http.Handle("/", router)

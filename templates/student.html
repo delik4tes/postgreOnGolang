@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang = "ru">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PostgresLanguage</title>
+    <link href="../static/css/about.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/header.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/alert.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/student.css" rel="stylesheet" type="text/css">
+    <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
+</head>
+
+<body>
+<div class="wrapper">
+    <header class="header">
+        <a href = "/"><img id="icon-login" alt="icon" src="../static/materials/icon.png"></a>
+        <div class="side">
+            <div class="right-btn">
+                <a href="/">
+                    <div class="side-button" id="main">
+                        Главная
+                    </div>
+                </a>
+                <a href="/about/">
+                    <div class="side-button" id="about">
+                        О проекте
+                    </div>
+                </a>
+            </div>
+            <div class="right-btn">
+                <a href="/cabinet/">
+                    <div class="side-button" id="cabinet">
+                        Личный кабинет
+                    </div>
+                </a>
+                <form action="/success/">
+                    <button class="side-button" id="out" name="out" value="true">
+                        Выйти
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+    <main>
+        <div class="student-main">
+            <!--            <div class="student-search">-->
+            <!--                <form>-->
+            <!--                    <input>-->
+            <!--                </form>-->
+            <!--            </div>-->
+            {{ range . }}
+            <div class="student-back">
+                Номер: {{ .Id }}
+                Филиал: {{ .Branch }}
+                Имя: {{ .Name }}
+                Фамилия: {{ .Surname }}
+                Отчество: {{ .Patronymic }}
+                Язык преподавания: {{ .Language }}
+                Зарплата: {{ .Salary }}
+                Опыт работы: {{ .Experience }}
+                Логин: {{ .Login }}
+            </div>
+            {{ end }}
+        </div>
+    </main>
+    <footer class="footer">
+        <div>
+            © 2022 OCG, Inc. Create by Egor
+            <a href="https://github.com/delik4tes">
+                <figure><img src="../static/materials/github-logo.svg" id="git"></figure>
+            </a>
+        </div>
+    </footer>
+</div>
+<script src="../static/scripts/dynamic_contract.js"></script>
+<script src="../static/scripts/dynamic_registration.js"></script>
+</body>
+
+</html>
