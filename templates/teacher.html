@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="../static/css/about.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
     <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
     <link href="../static/css/header.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/alert.css" rel="stylesheet" type="text/css">
     <link href="../static/css/teacher.css" rel="stylesheet" type="text/css">
     <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
@@ -49,31 +43,34 @@
     </header>
     <main>
         <div class="teacher-main">
-<!--            <div class="teacher-search">-->
-<!--                <form>-->
-<!--                    <input>-->
-<!--                </form>-->
-<!--            </div>-->
-
-            <div class="teacher-back">
-                {{ . }}
+            <div class="teacher-title">
                 Информация учителя:
-                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{.Main.Patronymic }}
-                Адрес учителя: {{ .Main.Branch }}
-                Язык: {{ .Main.Language }}
-                Зарплата: {{ .Main.Salary }}
-                Опыт: {{ .Main.Experience }}
+                <hr>
+            </div>
+            <div class="teacher-back" id="teacher-about">
+                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{.Main.Patronymic }} <br>
+                Адрес учителя: {{ .Main.Branch }} <br>
+                Язык: {{ .Main.Language }} <br>
+                Зарплата: {{ .Main.Salary }} <br>
+                Опыт: {{ .Main.Experience }} <br>
+            </div>
+
+            <div class="teacher-title">
+                Список учеников:
+                <hr>
             </div>
 
             {{ range .ContractsAndClients }}
             <div class="teacher-back">
-                Номер контракта: {{ .Id }}
-                ФИО Ученика: {{ .Name }} {{ .Surname }} {{ .Patronymic }}
-                Язык преподавания: {{ .Language }}
-                Телефон ученика: {{ .Phone }}
-                Отделение: {{ .Branch }}
-                Дата заключения: {{ .Date }}
-                Статус контракта: {{ .Status }}
+                Номер контракта: {{ .Id }} <br>
+                ФИО Ученика: {{ .Name }} {{ .Surname }} {{ .Patronymic }} <br>
+                Язык преподавания: {{ .Language }} <br>
+                Телефон ученика: {{ .Phone }} <br>
+                Отделение: {{ .Branch }} <br>
+                <div id="teacher=date">
+                    Дата заключения: {{ .Date }} <br>
+                </div>
+                Статус контракта: {{ .Status }} <br>
             </div>
             {{ end }}
         </div>
@@ -87,8 +84,5 @@
         </div>
     </footer>
 </div>
-<script src="../static/scripts/dynamic_contract.js"></script>
-<script src="../static/scripts/dynamic_registration.js"></script>
 </body>
-
 </html>

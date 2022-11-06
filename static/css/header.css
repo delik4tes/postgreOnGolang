@@ -2,6 +2,11 @@ body{
     margin: 0;
     font-family: "Lucida Grande", sans-serif;
     background: white;
+    height: 100%;
+}
+
+main {
+    flex: 1 1 auto;
 }
 
 a{

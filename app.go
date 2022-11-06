@@ -15,16 +15,9 @@ import (
 // Администратор:
 //  -1.Просмотр и редактирование всех договоров
 //  -2.Установка зарплаты для учителя
-//  -3.Ставить статус договора
 // Владелец:
 //  -1.Полный доступ (объединить все предыдущие возможности + добавить недостающие)
 //  -2.Установка зарплаты для администратора
-
-//TODO: Добавить функцию в PostgreSQL сколько всего учиться учеников в каждом филиале для владельца
-//TODO: сделать триггер в PostgreSQL добавить новую строчку в учителя и админов, чтобы писать имя того, что изменял зарплату администратору или учителю
-//TODO: Сделать проверку на уникальность логина (написать что пользователь с таким логином уже есть)
-//TODO: Сделать проверку при регистрации логина и прочего
-//TODO: Добавить группы юзеров в postgreSQL
 
 const password = " password=postgres"
 const user = "user=postgres"
@@ -33,23 +26,23 @@ const sslmode = " sslmode=disable"
 
 const connectParam = user + password + dbname + sslmode
 
-//type Branch struct {
-//	Id                                        uint16
-//	Address, Name, Surname, Patronymic, Login string
-//	Salary                                    float32
-//}
+type Branch struct {
+	Id                                        uint16
+	Address, Name, Surname, Patronymic, Login string
+	Salary                                    float32
+}
 
 type Client struct {
 	Id                                              uint16
 	Name, Surname, Patronymic, Phone, Login, Branch string
 }
 
-//type Contract struct {
-//	Id, Client, Teacher    uint16
-//	Quantity               uint32
-//	Language, Status, Date string
-//	Price                  float32
-//}
+type Contract struct {
+	Id, Client, Teacher    uint16
+	Quantity               uint32
+	Language, Status, Date string
+	Price                  float32
+}
 
 type Teacher struct {
 	Id, Experience                                     uint16
@@ -57,10 +50,10 @@ type Teacher struct {
 	Salary                                             float32
 }
 
-//type Login struct {
-//	Email, Password, Login string
-//	Status                 rune
-//}
+type Login struct {
+	Email, Password, Login string
+	Status                 rune
+}
 
 type Parameter struct {
 	Message                                                  string
@@ -115,11 +108,19 @@ type ClientInfo struct {
 	ContractsAndTeachers []ContractsAndTeachers
 }
 
-//var tableBranches []Branch
-//var tableClients []Client
-//var tableContracts []Contract
-//var tableTeachers []Teacher
-//var tableLogins []Login
+type AdminInfo struct {
+	TableClients   []Client
+	TableContracts []Contract
+	TableTeachers  []Teacher
+}
+
+type DirectorInfo struct {
+	tableBranches  []Branch
+	tableClients   []Client
+	tableContracts []Contract
+	tableTeachers  []Teacher
+	tableLogins    []Login
+}
 
 var parameters = Parameter{
 	"",
@@ -144,6 +145,8 @@ var currentUser User
 var languages Language
 var teacherInfo TeacherInfo
 var clientInfo ClientInfo
+var adminInfo AdminInfo
+var directorInfo DirectorInfo
 
 func mainPage(w http.ResponseWriter, _ *http.Request) {
 
@@ -979,9 +982,93 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	//Если внесены изменения
-	// result := request.URL.Query()
+	adminInfo = AdminInfo{}
 
+	tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM contract LIMIT 1)")
+	var exist bool
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM contract")
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			var contract Contract
+			err = res.Scan(&contract.Id, &contract.Client, &contract.Teacher, &contract.Language, &contract.Quantity,
+				&contract.Price, &contract.Date, &contract.Status)
+			if err != nil {
+				panic(err)
+			}
+			adminInfo.TableContracts = append(adminInfo.TableContracts, contract)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM clients LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM clients")
+		if err != nil {
+			panic(err)
+		}
+		var idBranch int
+		for res.Next() {
+			var client Client
+			err = res.Scan(&client.Id, &client.Name, &client.Surname, &client.Patronymic, &idBranch,
+				&client.Phone)
+			if err != nil {
+				panic(err)
+			}
+
+			address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+			err = address.Scan(&client.Branch)
+			if err != nil {
+				panic(err)
+			}
+
+			adminInfo.TableClients = append(adminInfo.TableClients, client)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM teachers LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM teachers")
+		if err != nil {
+			panic(err)
+		}
+		var idBranch int
+		for res.Next() {
+			var teacher Teacher
+			err = res.Scan(&teacher.Id, &idBranch, &teacher.Name, &teacher.Surname, &teacher.Patronymic,
+				&teacher.Language, &teacher.Salary, &teacher.Experience)
+			if err != nil {
+				panic(err)
+			}
+
+			address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+			err = address.Scan(&teacher.Branch)
+			if err != nil {
+				panic(err)
+			}
+
+			adminInfo.TableTeachers = append(adminInfo.TableTeachers, teacher)
+		}
+	}
+
+	admin, err := template.ParseFiles("templates/admin.html")
+	err = admin.Execute(writer, adminInfo)
 }
 
 func studentCabinet(writer http.ResponseWriter, request *http.Request) {
@@ -1074,6 +1161,10 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func editAdmin(writer http.ResponseWriter, request *http.Request) {
+
 }
 
 func handlerRequest() {

@@ -39,7 +39,7 @@
                         Личный кабинет
                     </div>
                 </a>
-                <form action="/success/">
+                <form action="/checkOut/">
                     <button class="side-button" id="out" name="out" value="true">
                         Выйти
                     </button>
@@ -49,11 +49,7 @@
     </header>
     <main>
         <div class="admin-main">
-            <!--            <div class="admin-search">-->
-            <!--                <form>-->
-            <!--                    <input>-->
-            <!--                </form>-->
-            <!--            </div>-->
+
             {{ range . }}
             <div class="admin-back">
                 Номер: {{ .Id }}
