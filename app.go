@@ -49,8 +49,7 @@ type Teacher struct {
 }
 
 type Login struct {
-	Email, Password, Login string
-	Status                 rune
+	Email, Password, Login, Status string
 }
 
 type Parameter struct {
@@ -113,11 +112,11 @@ type AdminInfo struct {
 }
 
 type DirectorInfo struct {
-	tableBranches  []Branch
-	tableClients   []Client
-	tableContracts []Contract
-	tableTeachers  []Teacher
-	tableLogins    []Login
+	TableBranches  []Branch
+	TableClients   []Client
+	TableContracts []Contract
+	TableTeachers  []Teacher
+	TableLogins    []Login
 }
 
 var parameters = Parameter{
@@ -775,7 +774,7 @@ func saveContract(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
-func alertPage(writer http.ResponseWriter, r *http.Request) {
+func alertPage(writer http.ResponseWriter, _ *http.Request) {
 
 	if parameters.LoginMask {
 		if parameters.Login {
@@ -962,16 +961,173 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func directorCabinet(writer http.ResponseWriter, request *http.Request) {
+func directorCabinet(writer http.ResponseWriter, _ *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	directorInfo = DirectorInfo{}
+
+	tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM contract LIMIT 1)")
+	var exist bool
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM contract ORDER BY id")
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			var contract Contract
+			err = res.Scan(&contract.Id, &contract.Client, &contract.Teacher, &contract.Language, &contract.Quantity,
+				&contract.Price, &contract.Date, &contract.Status)
+			if err != nil {
+				panic(err)
+			}
+			directorInfo.TableContracts = append(directorInfo.TableContracts, contract)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM clients LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM clients ORDER BY id")
+		if err != nil {
+			panic(err)
+		}
+		var idBranch int
+		for res.Next() {
+			var client Client
+			err = res.Scan(&client.Id, &client.Name, &client.Surname, &client.Patronymic, &idBranch,
+				&client.Phone, &client.Login)
+			if err != nil {
+				panic(err)
+			}
+
+			address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+			err = address.Scan(&client.Branch)
+			if err != nil {
+				panic(err)
+			}
+
+			directorInfo.TableClients = append(directorInfo.TableClients, client)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM teachers LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM teachers ORDER BY id")
+		if err != nil {
+			panic(err)
+		}
+		var idBranch int
+		for res.Next() {
+			var teacher Teacher
+			err = res.Scan(&teacher.Id, &idBranch, &teacher.Name, &teacher.Surname, &teacher.Patronymic,
+				&teacher.Language, &teacher.Salary, &teacher.Experience, &teacher.Login)
+			if err != nil {
+				panic(err)
+			}
+
+			address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+			err = address.Scan(&teacher.Branch)
+			if err != nil {
+				panic(err)
+			}
+
+			directorInfo.TableTeachers = append(directorInfo.TableTeachers, teacher)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM branch LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM branch ORDER BY id")
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			var branch Branch
+			err = res.Scan(&branch.Id, &branch.Address, &branch.Name, &branch.Surname, &branch.Patronymic,
+				&branch.Salary, &branch.Login)
+			if err != nil {
+				panic(err)
+			}
+
+			directorInfo.TableBranches = append(directorInfo.TableBranches, branch)
+		}
+	}
+
+	tmp = db.QueryRow("SELECT EXISTS(SELECT * FROM logins LIMIT 1)")
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
+
+	if exist {
+		res, err := db.Query("SELECT * FROM logins")
+		if err != nil {
+			panic(err)
+		}
+		for res.Next() {
+			var login Login
+			err = res.Scan(&login.Email, &login.Password, &login.Login, &login.Status)
+			if err != nil {
+				panic(err)
+			}
+
+			directorInfo.TableLogins = append(directorInfo.TableLogins, login)
+		}
+	}
+
+	director, err := template.ParseFiles("templates/director.html")
+	err = director.Execute(writer, directorInfo)
 
 }
 
 func editDirector(writer http.ResponseWriter, request *http.Request) {
 
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
 	http.Redirect(writer, request, "/director/", http.StatusSeeOther)
 }
 
-func adminCabinet(writer http.ResponseWriter, request *http.Request) {
+func adminCabinet(writer http.ResponseWriter, _ *http.Request) {
 
 	db, err := sql.Open("postgres", connectParam)
 	if err != nil {
