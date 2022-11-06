@@ -39,7 +39,7 @@
                         Личный кабинет
                     </div>
                 </a>
-                <form action="/success/">
+                <form action="/alert/">
                     <button class="side-button" id="out" name="out" value="true">
                         Выйти
                     </button>
@@ -56,15 +56,13 @@
             <!--            </div>-->
             {{ range . }}
             <div class="student-back">
-                Номер: {{ .Id }}
-                Филиал: {{ .Branch }}
-                Имя: {{ .Name }}
-                Фамилия: {{ .Surname }}
-                Отчество: {{ .Patronymic }}
-                Язык преподавания: {{ .Language }}
-                Зарплата: {{ .Salary }}
-                Опыт работы: {{ .Experience }}
-                Логин: {{ .Login }}
+                Номер договора: {{ .Id }}
+                Номер учителя: {{ .Teacher }}
+                Язык: {{ .Language }}
+                Кол-во месяцев {{ .Quantity }}
+                Цена: {{ .Price }}
+                Дата заключения: {{ .Date }}
+                Статус договора: {{ .Status }}
             </div>
             {{ end }}
         </div>
