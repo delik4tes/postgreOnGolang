@@ -33,23 +33,23 @@ const sslmode = " sslmode=disable"
 
 const connectParam = user + password + dbname + sslmode
 
-type Branch struct {
-	Id                                        uint16
-	Address, Name, Surname, Patronymic, Login string
-	Salary                                    float32
-}
+//type Branch struct {
+//	Id                                        uint16
+//	Address, Name, Surname, Patronymic, Login string
+//	Salary                                    float32
+//}
 
 type Client struct {
-	Id, Branch                              uint16
-	Name, Surname, Patronymic, Phone, Login string
+	Id                                              uint16
+	Name, Surname, Patronymic, Phone, Login, Branch string
 }
 
-type Contract struct {
-	Id, Client, Teacher    uint16
-	Quantity               uint32
-	Language, Status, Date string
-	Price                  float32
-}
+//type Contract struct {
+//	Id, Client, Teacher    uint16
+//	Quantity               uint32
+//	Language, Status, Date string
+//	Price                  float32
+//}
 
 type Teacher struct {
 	Id, Experience                                     uint16
@@ -57,10 +57,10 @@ type Teacher struct {
 	Salary                                             float32
 }
 
-type Login struct {
-	Email, Password, Login string
-	Status                 rune
-}
+//type Login struct {
+//	Email, Password, Login string
+//	Status                 rune
+//}
 
 type Parameter struct {
 	Message                                                  string
@@ -69,6 +69,7 @@ type Parameter struct {
 	Authorization, checkStudent, successContract             bool
 	AuthorizationMask, checkStudentMask, successContractMask bool
 	TeacherCabinet, StudentCabinet                           bool
+	TeacherCabinetMask, StudentCabinetMask                   bool
 }
 
 type User struct {
@@ -114,11 +115,11 @@ type ClientInfo struct {
 	ContractsAndTeachers []ContractsAndTeachers
 }
 
-var tableBranches []Branch
-var tableClients []Client
-var tableContracts []Contract
-var tableTeachers []Teacher
-var tableLogins []Login
+//var tableBranches []Branch
+//var tableClients []Client
+//var tableContracts []Contract
+//var tableTeachers []Teacher
+//var tableLogins []Login
 
 var parameters = Parameter{
 	"",
@@ -130,14 +131,21 @@ var parameters = Parameter{
 	false,
 	false,
 	false,
-	false, false, false, false, false, false}
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false,
+	false}
 
 var currentUser User
 var languages Language
 var teacherInfo TeacherInfo
 var clientInfo ClientInfo
 
-func mainPage(w http.ResponseWriter, request *http.Request) {
+func mainPage(w http.ResponseWriter, _ *http.Request) {
 
 	if !parameters.Out {
 		main, err := template.ParseFiles("templates/main.html", "templates/footer.html", "templates/header.html")
@@ -155,7 +163,7 @@ func mainPage(w http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func aboutPage(writer http.ResponseWriter, request *http.Request) {
+func aboutPage(writer http.ResponseWriter, _ *http.Request) {
 
 	if !parameters.Out {
 		about, err := template.ParseFiles("templates/about.html", "templates/footer.html", "templates/header.html")
@@ -172,7 +180,7 @@ func aboutPage(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func loginPage(writer http.ResponseWriter, request *http.Request) {
+func loginPage(writer http.ResponseWriter, _ *http.Request) {
 
 	login, err := template.ParseFiles("templates/login.html", "templates/footer.html")
 	err = login.ExecuteTemplate(writer, "login", nil)
@@ -223,6 +231,10 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 		parameters.successContractMask = false
 		parameters.Authorization = true
 		parameters.AuthorizationMask = false
+		parameters.TeacherCabinet = false
+		parameters.TeacherCabinetMask = false
+		parameters.StudentCabinet = false
+		parameters.StudentCabinetMask = false
 	} else {
 		parameters.Login = false
 		parameters.LoginMask = true
@@ -236,12 +248,16 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 		parameters.successContractMask = false
 		parameters.Authorization = false
 		parameters.AuthorizationMask = false
+		parameters.TeacherCabinet = false
+		parameters.TeacherCabinetMask = false
+		parameters.StudentCabinet = false
+		parameters.StudentCabinetMask = false
 	}
 
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
-func registrationPage(writer http.ResponseWriter, request *http.Request) {
+func registrationPage(writer http.ResponseWriter, _ *http.Request) {
 
 	db, err := sql.Open("postgres", connectParam)
 	if err != nil {
@@ -393,6 +409,10 @@ func checkOut(writer http.ResponseWriter, request *http.Request) {
 	parameters.successContractMask = false
 	parameters.Authorization = false
 	parameters.AuthorizationMask = false
+	parameters.TeacherCabinet = false
+	parameters.TeacherCabinetMask = false
+	parameters.StudentCabinet = false
+	parameters.StudentCabinetMask = false
 
 	currentUser = User{"", ""}
 	languages = Language{}
@@ -754,7 +774,7 @@ func saveContract(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
-func alertPage(writer http.ResponseWriter, request *http.Request) {
+func alertPage(writer http.ResponseWriter, _ *http.Request) {
 
 	if parameters.LoginMask {
 		if parameters.Login {
@@ -800,12 +820,16 @@ func alertPage(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
-	if !parameters.TeacherCabinet {
-		parameters.Message = "У учителя нет учеников"
+	if parameters.TeacherCabinetMask {
+		if !parameters.TeacherCabinet {
+			parameters.Message = "У учителя нет учеников"
+		}
 	}
 
-	if !parameters.StudentCabinet {
-		parameters.Message = "У ученика нет записей на курсы"
+	if parameters.StudentCabinetMask {
+		if !parameters.StudentCabinet {
+			parameters.Message = "У ученика нет записей на курсы"
+		}
 	}
 
 	if parameters.Out {
@@ -920,11 +944,12 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 
-		fmt.Println(teacherInfo)
-
 		parameters.TeacherCabinet = true
+		parameters.TeacherCabinetMask = true
+
 	} else {
 		parameters.TeacherCabinet = false
+		parameters.TeacherCabinetMask = true
 		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 
@@ -936,7 +961,6 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-// Полный доступ ко всему просмотру
 func directorCabinet(writer http.ResponseWriter, request *http.Request) {
 
 }
@@ -1037,8 +1061,10 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		parameters.StudentCabinet = true
+		parameters.StudentCabinetMask = true
 	} else {
 		parameters.StudentCabinet = false
+		parameters.StudentCabinetMask = true
 		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 

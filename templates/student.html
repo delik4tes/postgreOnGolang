@@ -39,7 +39,7 @@
                         Личный кабинет
                     </div>
                 </a>
-                <form action="/alert/">
+                <form action="/checkOut/">
                     <button class="side-button" id="out" name="out" value="true">
                         Выйти
                     </button>
@@ -54,7 +54,14 @@
             <!--                    <input>-->
             <!--                </form>-->
             <!--            </div>-->
-            {{ range . }}
+
+            <div class="student-back">
+                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{ .Main.Patronymic }}
+                Отделение: {{ .Main.Branch }}
+                Телефон: {{ .Main.Phone }}
+            </div>
+
+            {{ range .ContractsAndTeachers }}
             <div class="student-back">
                 Номер договора: {{ .Id }}
                 ФИО учителя: {{ .NameTeacher }} {{ .SurnameTeacher }} {{ .PatronymicTeacher }}
