@@ -52,9 +52,9 @@ type Contract struct {
 }
 
 type Teacher struct {
-	Id, Branch, Experience                     uint16
-	Name, Surname, Patronymic, Language, Login string
-	Salary                                     float32
+	Id, Experience                                     uint16
+	Name, Surname, Patronymic, Language, Login, Branch string
+	Salary                                             float32
 }
 
 type Login struct {
@@ -68,6 +68,7 @@ type Parameter struct {
 	OutMask, LoginMask, RegistrationMask                     bool
 	Authorization, checkStudent, successContract             bool
 	AuthorizationMask, checkStudentMask, successContractMask bool
+	TeacherCabinet, StudentCabinet                           bool
 }
 
 type User struct {
@@ -96,9 +97,21 @@ type ContractsAndClients struct {
 	Name, Surname, Patronymic, Phone string
 }
 
+type TeacherInfo struct {
+	Main                Teacher
+	ContractsAndClients []ContractsAndClients
+}
+
 type ContractsAndTeachers struct {
-	Contracts []Contract
-	Teachers  []Teacher
+	Id, Client                                     uint16
+	Quantity, Price                                uint32
+	Language, Status, Date, Branch                 string
+	NameTeacher, SurnameTeacher, PatronymicTeacher string
+}
+
+type ClientInfo struct {
+	Main                 Client
+	ContractsAndTeachers []ContractsAndTeachers
 }
 
 var tableBranches []Branch
@@ -117,11 +130,12 @@ var parameters = Parameter{
 	false,
 	false,
 	false,
-	false, false, false, false}
+	false, false, false, false, false, false}
 
 var currentUser User
 var languages Language
-var contractsAndClients []ContractsAndClients
+var teacherInfo TeacherInfo
+var clientInfo ClientInfo
 
 func mainPage(w http.ResponseWriter, request *http.Request) {
 
@@ -186,11 +200,17 @@ func checkLoginForm(writer http.ResponseWriter, request *http.Request) {
 
 	tmp := db.QueryRow("SELECT EXISTS(SELECT login FROM logins WHERE email = $1)", result["login"][0])
 	var exist bool
-	tmp.Scan(&exist)
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
 
 	if exist {
 		tmp = db.QueryRow("SELECT login FROM logins WHERE email = $1", result["login"][0])
-		_ = tmp.Scan(&currentUser.Login)
+		err = tmp.Scan(&currentUser.Login)
+		if err != nil {
+			panic(err)
+		}
 		parameters.Login = true
 		parameters.LoginMask = true
 		parameters.Registration = false
@@ -376,7 +396,6 @@ func checkOut(writer http.ResponseWriter, request *http.Request) {
 
 	currentUser = User{"", ""}
 	languages = Language{}
-	contractsAndClients = []ContractsAndClients{}
 
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
@@ -781,6 +800,14 @@ func alertPage(writer http.ResponseWriter, request *http.Request) {
 		}
 	}
 
+	if !parameters.TeacherCabinet {
+		parameters.Message = "У учителя нет учеников"
+	}
+
+	if !parameters.StudentCabinet {
+		parameters.Message = "У ученика нет записей на курсы"
+	}
+
 	if parameters.Out {
 		alert, err := template.ParseFiles("templates/alert.html", "templates/footer.html", "templates/header_new.html")
 		err = alert.ExecuteTemplate(writer, "alert", parameters)
@@ -830,7 +857,7 @@ func checkStatus(writer http.ResponseWriter, request *http.Request) {
 
 func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 
-	contractsAndClients = []ContractsAndClients{}
+	teacherInfo = TeacherInfo{}
 
 	db, err := sql.Open("postgres", connectParam)
 	if err != nil {
@@ -846,23 +873,28 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	id := db.QueryRow("SELECT id FROM teachers WHERE login = $1", currentUser.Login)
 	var idTeacher string
-	_ = id.Scan(&idTeacher)
+	err = id.Scan(&idTeacher)
+	if err != nil {
+		panic(err)
+	}
 
 	tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM contract WHERE teacher = $1 LIMIT 1)", idTeacher)
 	var exist bool
-	_ = tmp.Scan(&exist)
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
 
+	var idBranch uint16
 	if exist {
 		res, err := db.Query("SELECT contract.id,contract.language,contract.quantity,contract.price,contract.date,contract.status, clients.name, clients.surname, clients.patronymic, clients.branch, clients.phone FROM contract LEFT JOIN clients ON contract.client = clients.id WHERE contract.teacher = $1", idTeacher)
 		if err != nil {
 			panic(err)
 		}
 		for res.Next() {
-			var idBranch uint16
 			var tmp ContractsAndClients
 			err = res.Scan(&tmp.Id, &tmp.Language, &tmp.Quantity, &tmp.Price, &tmp.Date, &tmp.Status, &tmp.Name,
 				&tmp.Surname, &tmp.Patronymic, &idBranch, &tmp.Phone)
-			fmt.Println(tmp)
 			if err != nil {
 				panic(err)
 			}
@@ -871,12 +903,33 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 			if err != nil {
 				panic(err)
 			}
-			contractsAndClients = append(contractsAndClients, tmp)
+
+			teacherInfo.ContractsAndClients = append(teacherInfo.ContractsAndClients, tmp)
 		}
+
+		teacher := db.QueryRow("SELECT * FROM teachers WHERE id = $1", idTeacher)
+		err = teacher.Scan(&teacherInfo.Main.Id, &idBranch, &teacherInfo.Main.Name, &teacherInfo.Main.Surname, &teacherInfo.Main.Patronymic,
+			&teacherInfo.Main.Language, &teacherInfo.Main.Salary, &teacherInfo.Main.Experience, &teacherInfo.Main.Login)
+		if err != nil {
+			panic(err)
+		}
+
+		address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+		err = address.Scan(&teacherInfo.Main.Branch)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Println(teacherInfo)
+
+		parameters.TeacherCabinet = true
+	} else {
+		parameters.TeacherCabinet = false
+		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 
 	teacher, err := template.ParseFiles("templates/teacher.html")
-	err = teacher.Execute(writer, contractsAndClients)
+	err = teacher.Execute(writer, teacherInfo)
 
 	if err != nil {
 		panic(err)
@@ -909,6 +962,8 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 
 func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 
+	clientInfo = ClientInfo{}
+
 	db, err := sql.Open("postgres", connectParam)
 	if err != nil {
 		panic(err)
@@ -921,33 +976,74 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	id := db.QueryRow("SELECT id FROM clients WHERE login = $1", currentUser.Login)
-	var idStudent string
-	_ = id.Scan(&idStudent)
+	id := db.QueryRow("SELECT id,branch FROM clients WHERE login = $1", currentUser.Login)
+	var idStudent uint16
+	var idBranch uint16
+	err = id.Scan(&idStudent, &idBranch)
+	if err != nil {
+		panic(err)
+	}
 
-	tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM contract WHERE cleint = $1 LIMIT 1)", idStudent)
+	tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM contract WHERE client = $1 LIMIT 1)", idStudent)
 	var exist bool
-	_ = tmp.Scan(&exist)
+	err = tmp.Scan(&exist)
+	if err != nil {
+		panic(err)
+	}
 
 	if exist {
+
 		res, err := db.Query("SELECT * FROM contract WHERE client = $1", idStudent)
 		if err != nil {
 			panic(err)
 		}
 
 		for res.Next() {
-			var contract Contract
-			_ = res.Scan(&contract.Id, &contract.Client, &contract.Teacher,
-				&contract.Language, &contract.Quantity, &contract.Price,
-				&contract.Date, &contract.Status)
-			tableContracts = append(tableContracts, contract)
+			var idTeacher uint16
+			var tmp ContractsAndTeachers
+			err = res.Scan(&tmp.Id, &tmp.Client, &idTeacher,
+				&tmp.Language, &tmp.Quantity, &tmp.Price,
+				&tmp.Date, &tmp.Status)
+			if err != nil {
+				panic(err)
+			}
+			teacher := db.QueryRow("SELECT name,surname,patronymic FROM teachers WHERE id = $1",
+				idTeacher)
+			err = teacher.Scan(&tmp.NameTeacher, &tmp.SurnameTeacher, &tmp.PatronymicTeacher)
+			if err != nil {
+				panic(err)
+			}
+
+			address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+			err = address.Scan(&tmp.Branch)
+			if err != nil {
+				panic(err)
+			}
+
+			clientInfo.ContractsAndTeachers = append(clientInfo.ContractsAndTeachers, tmp)
 		}
+
+		client := db.QueryRow("SELECT * FROM clients WHERE id = $1", idStudent)
+		err = client.Scan(&clientInfo.Main.Id, &clientInfo.Main.Name, &clientInfo.Main.Surname,
+			&clientInfo.Main.Patronymic, &clientInfo.Main.Branch, &clientInfo.Main.Phone, &clientInfo.Main.Login)
+		if err != nil {
+			panic(err)
+		}
+
+		address := db.QueryRow("SELECT address FROM branch WHERE id = $1", idBranch)
+		err = address.Scan(&clientInfo.Main.Branch)
+		if err != nil {
+			panic(err)
+		}
+
+		parameters.StudentCabinet = true
 	} else {
-		http.Redirect(writer, request, "/contract/", http.StatusSeeOther)
+		parameters.StudentCabinet = false
+		http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 	}
 
 	student, err := template.ParseFiles("templates/student.html")
-	err = student.Execute(writer, tableContracts)
+	err = student.Execute(writer, clientInfo)
 
 	if err != nil {
 		panic(err)

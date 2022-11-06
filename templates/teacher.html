@@ -54,7 +54,18 @@
 <!--                    <input>-->
 <!--                </form>-->
 <!--            </div>-->
-            {{ range . }}
+
+            <div class="teacher-back">
+                {{ . }}
+                Информация учителя:
+                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{.Main.Patronymic }}
+                Адрес учителя: {{ .Main.Branch }}
+                Язык: {{ .Main.Language }}
+                Зарплата: {{ .Main.Salary }}
+                Опыт: {{ .Main.Experience }}
+            </div>
+
+            {{ range .ContractsAndClients }}
             <div class="teacher-back">
                 Номер контракта: {{ .Id }}
                 ФИО Ученика: {{ .Name }} {{ .Surname }} {{ .Patronymic }}

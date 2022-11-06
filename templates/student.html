@@ -57,7 +57,7 @@
             {{ range . }}
             <div class="student-back">
                 Номер договора: {{ .Id }}
-                Номер учителя: {{ .Teacher }}
+                ФИО учителя: {{ .NameTeacher }} {{ .SurnameTeacher }} {{ .PatronymicTeacher }}
                 Язык: {{ .Language }}
                 Кол-во месяцев {{ .Quantity }}
                 Цена: {{ .Price }}
