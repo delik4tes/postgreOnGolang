@@ -14,8 +14,6 @@
 }
 
 .admin-back{
-    display: flex;
-    flex-direction: column;
     width: 200px;
     background-color: #88A7C8;
     color: white;
@@ -25,5 +23,5 @@
     vertical-align: center;
     padding: 20px;
     font-size: 15px;
-    margin: 17vh auto 1vh;
+    margin: 2vh auto 1vh;
 }

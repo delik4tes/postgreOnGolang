@@ -1,7 +1,7 @@
 .success-alert{
     display: flex;
     flex-direction: column;
-    height: min-content;
+    height: max-content;
     width: 400px;
     background-color: #88A7C8;
     color: white;

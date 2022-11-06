@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="../static/css/about.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
     <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
     <link href="../static/css/header.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/alert.css" rel="stylesheet" type="text/css">
     <link href="../static/css/admin.css" rel="stylesheet" type="text/css">
     <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
@@ -49,18 +43,77 @@
     </header>
     <main>
         <div class="admin-main">
-
-            {{ range . }}
+            {{ range .TableContracts }}
             <div class="admin-back">
-                Номер: {{ .Id }}
-                Филиал: {{ .Branch }}
-                Имя: {{ .Name }}
-                Фамилия: {{ .Surname }}
-                Отчество: {{ .Patronymic }}
-                Язык преподавания: {{ .Language }}
-                Зарплата: {{ .Salary }}
-                Опыт работы: {{ .Experience }}
-                Логин: {{ .Login }}
+                {{ .Id }}
+                {{ .Client }}
+                {{ .Teacher }}
+                {{ .Language }}
+                {{ .Quantity }}
+                {{ .Price }}
+                {{ .Date }}
+                <form action="/editAdmin/" method="get" class="">
+                    {{ if eq .Status "Не оплачен" }}
+                    <select name="status">
+                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Выполнен" }}
+                    <select name="status">
+                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Расторгнут" }}
+                    <select name="status">
+                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Выполняется" }}
+                    <select name="status">
+                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                    </select>
+                    {{ end }}
+                    <input type="submit">
+                </form>
+            </div>
+            {{ end }}
+
+            {{ range .TableClients }}
+            <div class="admin-back">
+                {{ .Id }}
+                {{ .Name }}
+                {{ .Surname }}
+                {{ .Patronymic }}
+                {{ .Branch }}
+                {{ .Phone }}
+            </div>
+            {{ end }}
+
+            {{ range .TableTeachers }}
+            <div class="admin-back">
+                {{ .Id }}
+                {{ .Name }}
+                {{ .Surname }}
+                {{ .Patronymic }}
+                {{ .Branch }}
+                {{ .Language }}
+                <form action="/editAdmin/" method="get" class="">
+                    <input type="number" name="salary {{ .Id }}" value={{ .Salary }} min="0">
+                    <input type="submit">
+                </form>
+                {{ .Experience }}
             </div>
             {{ end }}
         </div>
@@ -74,8 +127,5 @@
         </div>
     </footer>
 </div>
-<script src="../static/scripts/dynamic_contract.js"></script>
-<script src="../static/scripts/dynamic_registration.js"></script>
 </body>
-
 </html>

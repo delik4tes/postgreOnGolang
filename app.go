@@ -12,12 +12,10 @@ import (
 )
 
 //FIXME работа с app.go:
-// Администратор:
-//  -1.Просмотр и редактирование всех договоров
-//  -2.Установка зарплаты для учителя
 // Владелец:
 //  -1.Полный доступ (объединить все предыдущие возможности + добавить недостающие)
 //  -2.Установка зарплаты для администратора
+//TODO: добавить кнопку для администратора и директора, что именно надо показывать им
 
 const password = " password=postgres"
 const user = "user=postgres"
@@ -777,7 +775,7 @@ func saveContract(writer http.ResponseWriter, request *http.Request) {
 	http.Redirect(writer, request, "/alert/", http.StatusSeeOther)
 }
 
-func alertPage(writer http.ResponseWriter, _ *http.Request) {
+func alertPage(writer http.ResponseWriter, r *http.Request) {
 
 	if parameters.LoginMask {
 		if parameters.Login {
@@ -914,7 +912,7 @@ func teacherCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	var idBranch uint16
 	if exist {
-		res, err := db.Query("SELECT contract.id,contract.language,contract.quantity,contract.price,contract.date,contract.status, clients.name, clients.surname, clients.patronymic, clients.branch, clients.phone FROM contract LEFT JOIN clients ON contract.client = clients.id WHERE contract.teacher = $1", idTeacher)
+		res, err := db.Query("SELECT contract.id,contract.language,contract.quantity,contract.price,contract.date,contract.status, clients.name, clients.surname, clients.patronymic, clients.branch, clients.phone FROM contract LEFT JOIN clients ON contract.client = clients.id WHERE contract.teacher = $1 ORDER BY contract.id", idTeacher)
 		if err != nil {
 			panic(err)
 		}
@@ -968,6 +966,11 @@ func directorCabinet(writer http.ResponseWriter, request *http.Request) {
 
 }
 
+func editDirector(writer http.ResponseWriter, request *http.Request) {
+
+	http.Redirect(writer, request, "/director/", http.StatusSeeOther)
+}
+
 func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	db, err := sql.Open("postgres", connectParam)
@@ -992,7 +995,7 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if exist {
-		res, err := db.Query("SELECT * FROM contract")
+		res, err := db.Query("SELECT * FROM contract ORDER BY id")
 		if err != nil {
 			panic(err)
 		}
@@ -1014,7 +1017,7 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if exist {
-		res, err := db.Query("SELECT * FROM clients")
+		res, err := db.Query("SELECT * FROM clients ORDER BY id")
 		if err != nil {
 			panic(err)
 		}
@@ -1022,7 +1025,7 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 		for res.Next() {
 			var client Client
 			err = res.Scan(&client.Id, &client.Name, &client.Surname, &client.Patronymic, &idBranch,
-				&client.Phone)
+				&client.Phone, &client.Login)
 			if err != nil {
 				panic(err)
 			}
@@ -1044,7 +1047,7 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if exist {
-		res, err := db.Query("SELECT * FROM teachers")
+		res, err := db.Query("SELECT * FROM teachers ORDER BY id")
 		if err != nil {
 			panic(err)
 		}
@@ -1052,7 +1055,7 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 		for res.Next() {
 			var teacher Teacher
 			err = res.Scan(&teacher.Id, &idBranch, &teacher.Name, &teacher.Surname, &teacher.Patronymic,
-				&teacher.Language, &teacher.Salary, &teacher.Experience)
+				&teacher.Language, &teacher.Salary, &teacher.Experience, &teacher.Login)
 			if err != nil {
 				panic(err)
 			}
@@ -1069,6 +1072,43 @@ func adminCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	admin, err := template.ParseFiles("templates/admin.html")
 	err = admin.Execute(writer, adminInfo)
+}
+
+func editAdmin(writer http.ResponseWriter, request *http.Request) {
+
+	db, err := sql.Open("postgres", connectParam)
+	if err != nil {
+		panic(err)
+	}
+
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			panic(err)
+		}
+	}(db)
+
+	result := request.URL.Query()
+	for key, value := range result {
+		words := strings.Split(key, " ")
+		if words[0] == "status" {
+			tmp := strings.Split(value[0], "_")
+			_, err := db.Exec("UPDATE contract SET status = $1 WHERE id = $2",
+				tmp[0], tmp[1])
+			if err != nil {
+				panic(err)
+			}
+		}
+		if words[0] == "salary" {
+			_, err := db.Exec("UPDATE teachers SET salary = $1 WHERE id = $2",
+				value[0], words[1])
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
+
+	http.Redirect(writer, request, "/admin/", http.StatusSeeOther)
 }
 
 func studentCabinet(writer http.ResponseWriter, request *http.Request) {
@@ -1104,7 +1144,7 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 
 	if exist {
 
-		res, err := db.Query("SELECT * FROM contract WHERE client = $1", idStudent)
+		res, err := db.Query("SELECT * FROM contract WHERE client = $1 ORDER BY id", idStudent)
 		if err != nil {
 			panic(err)
 		}
@@ -1163,10 +1203,6 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-func editAdmin(writer http.ResponseWriter, request *http.Request) {
-
-}
-
 func handlerRequest() {
 	router := mux.NewRouter()
 	currentUser = User{"", ""}
@@ -1186,6 +1222,8 @@ func handlerRequest() {
 	router.HandleFunc("/student/", studentCabinet)
 	router.HandleFunc("/teacher/", teacherCabinet)
 
+	router.HandleFunc("/editAdmin/", editAdmin)
+	router.HandleFunc("/editDirector/", editDirector)
 	router.HandleFunc("/alert/", alertPage)
 
 	http.Handle("/", router)
