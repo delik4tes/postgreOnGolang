@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>PostgresLanguage</title>
-    <link href="../static/css/about.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/contract.css" rel="stylesheet" type="text/css">
     <link href="../static/css/footer.css" rel="stylesheet" type="text/css">
     <link href="../static/css/header.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/login.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/main.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/registration.css" rel="stylesheet" type="text/css">
-    <link href="../static/css/alert.css" rel="stylesheet" type="text/css">
     <link href="../static/css/student.css" rel="stylesheet" type="text/css">
     <link href="../static/materials/icon.png" rel="icon" type="image/x-icon">
 </head>
@@ -49,27 +43,28 @@
     </header>
     <main>
         <div class="student-main">
-            <!--            <div class="student-search">-->
-            <!--                <form>-->
-            <!--                    <input>-->
-            <!--                </form>-->
-            <!--            </div>-->
-
-            <div class="student-back">
-                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{ .Main.Patronymic }}
-                Отделение: {{ .Main.Branch }}
-                Телефон: {{ .Main.Phone }}
+            <div class="student-title">
+                Личная информация:
+                <hr>
             </div>
-
+            <div class="student-back" id="student-about">
+                ФИО: {{ .Main.Name }} {{ .Main.Surname }} {{ .Main.Patronymic }} <br>
+                Отделение: {{ .Main.Branch }} <br>
+                Телефон: {{ .Main.Phone }} <br>
+            </div>
+            <div class="student-title">
+                Записи на учебные курсы:
+                <hr>
+            </div>
             {{ range .ContractsAndTeachers }}
             <div class="student-back">
-                Номер договора: {{ .Id }}
-                ФИО учителя: {{ .NameTeacher }} {{ .SurnameTeacher }} {{ .PatronymicTeacher }}
-                Язык: {{ .Language }}
-                Кол-во месяцев {{ .Quantity }}
-                Цена: {{ .Price }}
-                Дата заключения: {{ .Date }}
-                Статус договора: {{ .Status }}
+                Номер договора: {{ .Id }} <br>
+                ФИО учителя: {{ .NameTeacher }} {{ .SurnameTeacher }} {{ .PatronymicTeacher }} <br>
+                Язык: {{ .Language }} <br>
+                Кол-во месяцев {{ .Quantity }} <br>
+                Цена: {{ .Price }} <br>
+                Дата заключения: {{ .Date }} <br>
+                Статус договора: {{ .Status }} <br>
             </div>
             {{ end }}
         </div>
@@ -78,13 +73,10 @@
         <div>
             © 2022 OCG, Inc. Create by Egor
             <a href="https://github.com/delik4tes">
-                <figure><img src="../static/materials/github-logo.svg" id="git"></figure>
+                <figure><img src="../static/materials/github-logo.svg" id="git" alt="git"></figure>
             </a>
         </div>
     </footer>
 </div>
-<script src="../static/scripts/dynamic_contract.js"></script>
-<script src="../static/scripts/dynamic_registration.js"></script>
 </body>
-
 </html>
