@@ -43,77 +43,98 @@
     </header>
     <main>
         <div class="admin-main">
+            <div class="admin-title">
+                Список контрактов:
+                <hr>
+            </div>
             {{ range .TableContracts }}
             <div class="admin-back">
-                {{ .Id }}
-                {{ .Client }}
-                {{ .Teacher }}
-                {{ .Language }}
-                {{ .Quantity }}
-                {{ .Price }}
-                {{ .Date }}
-                <form action="/editAdmin/" method="get" class="">
+                Номер контракта: {{ .Id }} <br>
+                Номер клиента: {{ .Client }} <br>
+                Номер учителя: {{ .Teacher }} <br>
+                Язык: {{ .Language }} <br>
+                Количество месяцев: {{ .Quantity }} <br>
+                Стоимость: {{ .Price }} <br>
+                Дата заключения контракта: {{ .Date }} <br>
+                <form action="/editAdmin/" method="get">
                     {{ if eq .Status "Не оплачен" }}
-                    <select name="status">
-                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
-                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
-                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
-                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
-                    </select>
+                    <label>Статус договора:
+                        <select name="status" class="admin-select">
+                            <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                            <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                            <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                            <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                        </select>
+                    </label>
                     {{ end }}
                     {{ if eq .Status "Выполнен" }}
-                    <select name="status">
-                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
-                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
-                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
-                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
-                    </select>
+                    <label>Статус договора:
+                        <select name="status" class="admin-select">
+                            <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                            <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                            <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                            <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                        </select>
+                    </label>
                     {{ end }}
                     {{ if eq .Status "Расторгнут" }}
-                    <select name="status">
-                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
-                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
-                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
-                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
-                    </select>
+                    <label>Статус договора:
+                        <select name="status" class="admin-select">
+                            <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                            <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                            <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                            <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                        </select>
+                    </label>
                     {{ end }}
                     {{ if eq .Status "Выполняется" }}
-                    <select name="status">
-                        <option value="Выполняется_{{ .Id }}">Выполняется</option>
-                        <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
-                        <option value="Выполнен_{{ .Id }}">Выполнен</option>
-                        <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
-                    </select>
+                    <label>Статус договора:
+                        <select name="status" class="admin-select">
+                            <option value="Выполняется_{{ .Id }}">Выполняется</option>
+                            <option value="Не оплачен_{{ .Id }}">Не оплачен</option>
+                            <option value="Выполнен_{{ .Id }}">Выполнен</option>
+                            <option value="Расторгнут_{{ .Id }}">Расторгнут</option>
+                        </select>
+                    </label>
                     {{ end }}
-                    <input type="submit">
+                    <br>
+                    <input type="submit" class="admin-btn" value="Изменить">
                 </form>
             </div>
             {{ end }}
 
+            <div class="admin-title">
+                Список клиентов:
+                <hr>
+            </div>
             {{ range .TableClients }}
             <div class="admin-back">
-                {{ .Id }}
-                {{ .Name }}
-                {{ .Surname }}
-                {{ .Patronymic }}
-                {{ .Branch }}
-                {{ .Phone }}
+                Номер ученика: {{ .Id }} <br>
+                ФИО ученик: {{ .Name }} {{ .Surname }}  {{ .Patronymic }} <br>
+                Филиал ученика: {{ .Branch }}
+                Телефон ученика: {{ .Phone }}
             </div>
             {{ end }}
+
+            <div class="admin-title">
+                Список учителей:
+                <hr>
+            </div>
 
             {{ range .TableTeachers }}
             <div class="admin-back">
-                {{ .Id }}
-                {{ .Name }}
-                {{ .Surname }}
-                {{ .Patronymic }}
-                {{ .Branch }}
-                {{ .Language }}
-                <form action="/editAdmin/" method="get" class="">
-                    <input type="number" name="salary {{ .Id }}" value={{ .Salary }} min="1">
-                    <input type="submit">
+                Номер учителя: {{ .Id }} <br>
+                ФИО учителя: {{ .Name }} {{ .Surname }} {{ .Patronymic }} <br>
+                Филиал учителя: {{ .Branch }} <br>
+                Язык учителя: {{ .Language }} <br>
+                Опыт учителя: {{ .Experience }} <br>
+                <form action="/editAdmin/" method="get">
+                    <label>Зарплата:
+                        <input type="number" name="salary {{ .Id }}" value={{ .Salary }} min="1">
+                    </label>
+                    <input type="submit" class="admin-btn" value="Изменить">
                 </form>
-                {{ .Experience }}
+                <br>
             </div>
             {{ end }}
         </div>
@@ -122,7 +143,7 @@
         <div>
             © 2022 OCG, Inc. Create by Egor
             <a href="https://github.com/delik4tes">
-                <figure><img src="../static/materials/github-logo.svg" id="git"></figure>
+                <figure><img src="../static/materials/github-logo.svg" id="git" alt="git"></figure>
             </a>
         </div>
     </footer>

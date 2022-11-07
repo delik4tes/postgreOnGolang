@@ -52,6 +52,11 @@ type Login struct {
 	Email, Password, Login, Status string
 }
 
+type Func struct {
+	Address string
+	Count   int
+}
+
 type Parameter struct {
 	Message                                                  string
 	Out, Login, Registration                                 bool
@@ -117,6 +122,7 @@ type DirectorInfo struct {
 	TableContracts []Contract
 	TableTeachers  []Teacher
 	TableLogins    []Login
+	Func           []Func
 }
 
 var parameters = Parameter{
@@ -305,7 +311,6 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 	}(db)
 
 	result := request.URL.Query()
-	fmt.Println(result)
 
 	if result["position"][0] == "student" {
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
@@ -335,10 +340,6 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 
 	} else if result["position"][0] == "teacher" {
 
-		tmp := db.QueryRow("SELECT login FROM logins WHERE email = $1", result["mail"][0])
-		var check string
-		err = tmp.Scan(&check)
-
 		_, err = db.Exec("INSERT INTO logins (email,password,status) VALUES ($1,$2,$3)",
 			result["mail"][0], result["password"][0], "T")
 		if err != nil {
@@ -353,10 +354,16 @@ func saveRegistrationForm(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		_, err = db.Exec("INSERT INTO teachers (name,surname,patronymic,language,experience,login,branch) VALUES ($1,$2,$3,$4,$5,$6,$7)",
-			result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"][0], teacherLogin, idBranch)
-		if err != nil {
-			panic(err)
+
+		tmp := db.QueryRow("SELECT EXISTS(SELECT * FROM logins WHERE login = $1)", teacherLogin)
+		var check bool
+		err = tmp.Scan(&check)
+		if check {
+			_, err = db.Exec("INSERT INTO teachers (name,surname,patronymic,language,experience,login,branch) VALUES ($1,$2,$3,$4,$5,$6,$7)",
+				result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"][0], teacherLogin, idBranch)
+			if err != nil {
+				panic(err)
+			}
 		}
 
 		currentUser.Login = teacherLogin
@@ -814,7 +821,7 @@ func alertPage(writer http.ResponseWriter, _ *http.Request) {
 
 	if parameters.AuthorizationMask {
 		if !parameters.Authorization {
-			parameters.Message = "Сначала нужно авторизоваться в системе"
+			parameters.Message = "Сначала нужно авторизоваться в системе или быть учеником"
 		} else {
 			parameters.Message = "Успешная авторизация в системе"
 		}
@@ -1106,6 +1113,17 @@ func directorCabinet(writer http.ResponseWriter, _ *http.Request) {
 		}
 	}
 
+	res, err := db.Query("SELECT * FROM studentsinbranches()")
+	for res.Next() {
+		var f Func
+		err = res.Scan(&f.Address, &f.Count)
+		if err != nil {
+			panic(err)
+		}
+
+		directorInfo.Func = append(directorInfo.Func, f)
+	}
+
 	director, err := template.ParseFiles("templates/director.html")
 	err = director.Execute(writer, directorInfo)
 
@@ -1126,10 +1144,18 @@ func editDirector(writer http.ResponseWriter, request *http.Request) {
 	}(db)
 
 	result := request.URL.Query()
+	fmt.Println(result)
 
 	for key := range result {
 		words := strings.Split(key, " ")
 		if words[0] == "contract" {
+			if result["delete"][0] == "on" {
+				_, err := db.Exec("DELETE FROM contract WHERE id = $1", words[1])
+				if err != nil {
+					panic(err)
+				}
+				break
+			}
 			_, err := db.Exec("UPDATE contract SET date = $1, language = $2, price = $3, quantity = $4, status = $5 WHERE id = $6",
 				result["date"][0], result["language"][0], result["price"][0], result["quantity"][0], result["status"][0], words[1])
 			if err != nil {
@@ -1207,6 +1233,7 @@ func adminCabinet(writer http.ResponseWriter, _ *http.Request) {
 			var contract Contract
 			err = res.Scan(&contract.Id, &contract.Client, &contract.Teacher, &contract.Language, &contract.Quantity,
 				&contract.Price, &contract.Date, &contract.Status)
+			//contract.Date = contract.Date[:10]
 			if err != nil {
 				panic(err)
 			}

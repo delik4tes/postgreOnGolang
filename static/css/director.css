@@ -5,18 +5,18 @@
     align-items: center;
 }
 
-.director-search{
-    margin-top: 3vh;
-    width: 75%;
-    height: 50px;
-    background-color: #88A7C8;
+.director-title {
+    margin-top: 2vh;
     font-size: 25px;
+    color: #14385E;
+}
+
+hr{
+    color: #14385E;
 }
 
 .director-back{
-    display: flex;
-    flex-direction: column;
-    width: 200px;
+    width: max-content;
     background-color: #88A7C8;
     color: white;
     border-radius: 20px;
@@ -24,6 +24,50 @@
     text-align: center;
     vertical-align: center;
     padding: 20px;
+    font-size: 20px;
+    margin: 2vh auto 1vh;
+    outline: 5px solid #14385E;
+}
+
+.director-btn{
     font-size: 15px;
-    margin: 17vh auto 1vh;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding: 5px 70px;
+    background-color: #3d6690;
+    color: white;
+    border: none;
+    outline: none;
+    border-radius: 15px;
+}
+
+.director-btn:hover {
+    color: #3d6690;
+    background-color: white;
+    cursor: pointer;
+}
+
+.director-select{
+    width: 290px;
+    height: 40px;
+    appearance: none;
+    font-size: 18px;
+    background-color: white;
+    border-radius: 10px;
+    border-color: #14385E;
+    outline: none;
+}
+
+.director-form input {
+    font-size: 15px;
+    padding: 5px;
+    border-radius: 10px;
+    border-color: #14385E;
+    outline: none;
+}
+
+.director-form input:focus-visible{
+    padding: 10px;
 }
