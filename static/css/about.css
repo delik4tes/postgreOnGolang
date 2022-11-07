@@ -21,7 +21,7 @@
     color:white;
 }
 .about-picture{
-    max-width: 25%;
+    width: 150vh;
     border-radius: 15px;
     margin-bottom: 10px;
     align-items: center;
