@@ -1091,7 +1091,7 @@ func directorCabinet(writer http.ResponseWriter, _ *http.Request) {
 	}
 
 	if exist {
-		res, err := db.Query("SELECT * FROM logins")
+		res, err := db.Query("SELECT * FROM logins ORDER BY login")
 		if err != nil {
 			panic(err)
 		}
@@ -1125,7 +1125,52 @@ func editDirector(writer http.ResponseWriter, request *http.Request) {
 		}
 	}(db)
 
-	fmt.Println(request.URL.Query())
+	result := request.URL.Query()
+
+	for key := range result {
+		words := strings.Split(key, " ")
+		if words[0] == "contract" {
+			_, err := db.Exec("UPDATE contract SET date = $1, language = $2, price = $3, quantity = $4, status = $5 WHERE id = $6",
+				result["date"][0], result["language"][0], result["price"][0], result["quantity"][0], result["status"][0], words[1])
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+		if words[0] == "teacher" {
+			_, err := db.Exec("UPDATE teachers SET name = $1, surname = $2, patronymic = $3, language = $4, experience = $5, salary = $6 WHERE id = $7 ",
+				result["name"][0], result["surname"][0], result["patronymic"][0], result["language"][0], result["experience"][0], result["salary"][0], words[1])
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+		if words[0] == "login" {
+			_, err := db.Exec("UPDATE logins SET status = $1, password = $2 WHERE login = $3",
+				result["status"][0], result["password"][0], words[1])
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+
+		if words[0] == "branch" {
+			_, err = db.Exec("UPDATE branch SET name = $1, surname = $2, patronymic = $3, address = $4, salary = $5 WHERE id = $6",
+				result["name"][0], result["surname"][0], result["patronymic"][0], result["address"][0], result["salary"][0], words[1])
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+		if words[0] == "client" {
+			_, err := db.Exec("UPDATE clients SET name = $1, surname = $2, patronymic = $3, phone = $4 WHERE id = $5",
+				result["name"][0], result["surname"][0], result["patronymic"][0], result["phone"][0], words[1])
+			if err != nil {
+				panic(err)
+			}
+			break
+		}
+	}
 
 	http.Redirect(writer, request, "/director/", http.StatusSeeOther)
 }

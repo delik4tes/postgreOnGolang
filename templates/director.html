@@ -288,7 +288,7 @@
                 <form action="/editDirector/" method="get">
                     <input type="text" name="name" value={{ .Name }}>
                     <input type="text" name="surname" value={{ .Surname }}>
-                    <input type="text" name="patronymic" value={{ .Patronymic }}>
+                    <input type="text" name="patronymic" value={{ .Patronymic }} >
                     <input type="text" name="phone" value={{ .Phone }}>
                     <input type="submit" name="client {{ .Id }}">
                 </form>
@@ -301,7 +301,7 @@
             <div class="director-back">
                 {{ .Id }}
                 {{ .Branch }}
-                <form>
+                <form action="/editDirector/" method="get">
                     <input type="text" name="name" value={{ .Name }}>
                     <input type="text" name="surname" value={{ .Surname }}>
                     <input type="text" name="patronymic" value={{ .Patronymic }}>
@@ -507,7 +507,7 @@
 
             {{ range .TableBranches }}
             <div class="director-back">
-                <form>
+                <form action="/editDirector/" method="get">
                     {{ .Id }}
                     <input type="text" name="address" value={{ .Address }}>
                     <input type="text" name="name" value={{ .Name }}>
@@ -523,7 +523,7 @@
             {{ range .TableLogins }}
             <div class="director-back">
                 {{ .Email }}
-                <form>
+                <form action="/editDirector/" method="get">
                     {{ if eq .Status "S" }}
                     <select name="status">
                         <option value="S">Студент</option>
@@ -546,7 +546,7 @@
                     </select>
                     {{ end }}
                     <input type="text" name="password" value={{ .Password }}>
-                    <input type="submit" name="login + {{ .Login }}">
+                    <input type="submit" name="login {{ .Login }}">
                 </form>
                 {{ .Login }}
             </div>
