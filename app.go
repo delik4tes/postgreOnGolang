@@ -996,6 +996,7 @@ func directorCabinet(writer http.ResponseWriter, _ *http.Request) {
 			if err != nil {
 				panic(err)
 			}
+			contract.Date = contract.Date[:10]
 			directorInfo.TableContracts = append(directorInfo.TableContracts, contract)
 		}
 	}
@@ -1123,6 +1124,8 @@ func editDirector(writer http.ResponseWriter, request *http.Request) {
 			panic(err)
 		}
 	}(db)
+
+	fmt.Println(request.URL.Query())
 
 	http.Redirect(writer, request, "/director/", http.StatusSeeOther)
 }
@@ -1361,7 +1364,6 @@ func studentCabinet(writer http.ResponseWriter, request *http.Request) {
 
 func handlerRequest() {
 	router := mux.NewRouter()
-	currentUser = User{"", ""}
 	router.HandleFunc("/", mainPage).Methods("GET")
 	router.HandleFunc("/about/", aboutPage).Methods("GET")
 	router.HandleFunc("/login/", loginPage)

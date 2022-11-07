@@ -49,22 +49,250 @@
                 {{ .Id }}
                 {{ .Client }}
                 {{ .Teacher }}
-                {{ .Language }}
-                {{ .Quantity }}
-                {{ .Price }}
-                {{ .Date }}
-                {{ .Status }}
+                <form action="/editDirector/" method="get">
+                    {{ if eq .Language "Английский язык" }}
+                    <select name="language">
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Немецкий язык" }}
+                    <select name="language">
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Французский язык" }}
+                    <select name="language">
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Испанский язык" }}
+                    <select name="language">
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Китайский язык" }}
+                    <select name="language">
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Японский язык" }}
+                    <select name="language">
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Хинди" }}
+                    <select name="language">
+                        <option value="Хинди">Хинди</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Иврит" }}
+                    <select name="language">
+                        <option value="Иврит">Иврит</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Казахский язык" }}
+                    <select name="language">
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Чувашский язык" }}
+                    <select name="language">
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Турецкий язык" }}
+                    <select name="language">
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Арабский язык" }}
+                    <select name="language">
+                        <option value="Арабский язык">Арабский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                    </select>
+                    {{ end }}
+                    <input type="number" name="quantity" value={{ .Quantity }} min="1">
+                    <input type="number" name="price" value={{ .Price }} min="1">
+                    <input type="date" name="date" value= {{ .Date }} >
+                    {{ if eq .Status "Не оплачен" }}
+                    <select name="status">
+                        <option value="Не оплачен">Не оплачен</option>
+                        <option value="Выполнен">Выполнен</option>
+                        <option value="Расторгнут">Расторгнут</option>
+                        <option value="Выполняется">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Выполнен" }}
+                    <select name="status">
+                        <option value="Выполнен">Выполнен</option>
+                        <option value="Не оплачен">Не оплачен</option>
+                        <option value="Расторгнут">Расторгнут</option>
+                        <option value="Выполняется">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Расторгнут" }}
+                    <select name="status">
+                        <option value="Расторгнут">Расторгнут</option>
+                        <option value="Не оплачен">Не оплачен</option>
+                        <option value="Выполнен">Выполнен</option>
+                        <option value="Выполняется">Выполняется</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "Выполняется" }}
+                    <select name="status">
+                        <option value="Выполняется">Выполняется</option>
+                        <option value="Не оплачен">Не оплачен</option>
+                        <option value="Выполнен">Выполнен</option>
+                        <option value="Расторгнут">Расторгнут</option>
+                    </select>
+                    {{ end }}
+                    <input type="submit" name="contract {{ .Id }}">
+                </form>
             </div>
             {{ end }}
 
             {{ range .TableClients }}
             <div class="director-back">
                 {{ .Id }}
-                {{ .Name }}
-                {{ .Surname }}
-                {{ .Patronymic }}
+                <form action="/editDirector/" method="get">
+                    <input type="text" name="name" value={{ .Name }}>
+                    <input type="text" name="surname" value={{ .Surname }}>
+                    <input type="text" name="patronymic" value={{ .Patronymic }}>
+                    <input type="text" name="phone" value={{ .Phone }}>
+                    <input type="submit" name="client {{ .Id }}">
+                </form>
                 {{ .Branch }}
-                {{ .Phone }}
                 {{ .Login }}
             </div>
             {{ end }}
@@ -73,24 +301,221 @@
             <div class="director-back">
                 {{ .Id }}
                 {{ .Branch }}
-                {{ .Name }}
-                {{ .Surname }}
-                {{ .Patronymic }}
-                {{ .Language }}
-                {{ .Salary }}
-                {{ .Experience }}
+                <form>
+                    <input type="text" name="name" value={{ .Name }}>
+                    <input type="text" name="surname" value={{ .Surname }}>
+                    <input type="text" name="patronymic" value={{ .Patronymic }}>
+                    {{ if eq .Language "Английский язык" }}
+                    <select name="language">
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Немецкий язык" }}
+                    <select name="language">
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Французский язык" }}
+                    <select name="language">
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Испанский язык" }}
+                    <select name="language">
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Китайский язык" }}
+                    <select name="language">
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Японский язык" }}
+                    <select name="language">
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Хинди" }}
+                    <select name="language">
+                        <option value="Хинди">Хинди</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Иврит" }}
+                    <select name="language">
+                        <option value="Иврит">Иврит</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Казахский язык" }}
+                    <select name="language">
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Чувашский язык" }}
+                    <select name="language">
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Турецкий язык" }}
+                    <select name="language">
+                        <option value="Турецкий язык">Турецкий язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Арабский язык">Арабский язык</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Language "Арабский язык" }}
+                    <select name="language">
+                        <option value="Арабский язык">Арабский язык</option>
+                        <option value="Английский язык">Английский язык</option>
+                        <option value="Немецкий язык">Немецкий язык</option>
+                        <option value="Французский язык">Французский язык</option>
+                        <option value="Испанский язык">Испанский язык</option>
+                        <option value="Китайский язык">Китайский язык</option>
+                        <option value="Японский язык">Японский язык</option>
+                        <option value="Хинди">Хинди</option>
+                        <option value="Иврит">Иврит</option>
+                        <option value="Казахский язык">Казахский язык</option>
+                        <option value="Чувашский язык">Чувашский язык</option>
+                        <option value="Турецкий язык">Турецкий язык</option>
+                    </select>
+                    {{ end }}
+                    <input type="number" name="salary" value={{ .Salary }} min="1">
+                    <input type="number" name="experience" value={{ .Experience }} min="0">
+                    <input type="submit" name="teacher {{ .Id }}">
+                </form>
                 {{ .Login }}
             </div>
             {{ end }}
 
             {{ range .TableBranches }}
             <div class="director-back">
-                {{ .Id }}
-                {{ .Address }}
-                {{ .Name }}
-                {{ .Surname }}
-                {{ .Patronymic }}
-                {{ .Salary }}
+                <form>
+                    {{ .Id }}
+                    <input type="text" name="address" value={{ .Address }}>
+                    <input type="text" name="name" value={{ .Name }}>
+                    <input type="text" name="surname" value={{ .Surname }}>
+                    <input type="text" name="patronymic" value={{ .Patronymic }}>
+                    <input type="number" name="salary" value={{ .Salary }} min="1">
+                    <input type="submit" name="branch {{ .Id }}">
+                </form>
                 {{ .Login }}
             </div>
             {{ end }}
@@ -98,9 +523,32 @@
             {{ range .TableLogins }}
             <div class="director-back">
                 {{ .Email }}
-                {{ .Password }}
+                <form>
+                    {{ if eq .Status "S" }}
+                    <select name="status">
+                        <option value="S">Студент</option>
+                        <option value="T">Учитель</option>
+                        <option value="A">Администратор</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "A" }}
+                    <select name="status">
+                        <option value="A">Администратор</option>
+                        <option value="S">Студент</option>
+                        <option value="T">Учитель</option>
+                    </select>
+                    {{ end }}
+                    {{ if eq .Status "T" }}
+                    <select name="status">
+                        <option value="T">Учитель</option>
+                        <option value="S">Студент</option>
+                        <option value="A">Администратор</option>
+                    </select>
+                    {{ end }}
+                    <input type="text" name="password" value={{ .Password }}>
+                    <input type="submit" name="login + {{ .Login }}">
+                </form>
                 {{ .Login }}
-                {{ .Status }}
             </div>
             {{ end }}
 

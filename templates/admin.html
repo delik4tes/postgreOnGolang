@@ -110,7 +110,7 @@
                 {{ .Branch }}
                 {{ .Language }}
                 <form action="/editAdmin/" method="get" class="">
-                    <input type="number" name="salary {{ .Id }}" value={{ .Salary }} min="0">
+                    <input type="number" name="salary {{ .Id }}" value={{ .Salary }} min="1">
                     <input type="submit">
                 </form>
                 {{ .Experience }}
